@@ -2,4 +2,4 @@
 
 # Jacob Seto, jjs472
 
-# Ben Perl, bdp58
+# Benjamin Perl, bdp58
