@@ -5,3 +5,5 @@
 # Benjamin Perl, bdp58
 
 # Aaron Nagler, atn45
+
+# Derek Thompson, det75
