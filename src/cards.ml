@@ -7,10 +7,20 @@ type card = {
 }
 
 module type CardType = sig
+  (** Type representing a card *)
   type t
+  (** Returns the color of the card as a string *)
   val get_color : t -> string
+  (** Returns the number of the card as a string *)
   val get_number : t -> string
+  (** If the card has a property, return card property as a string. Returns
+      "None" if the card has no property *)
   val get_property : t -> string
+(** Return true if a card can be played on top of another card. Return false
+    if not. A card can be played on top of another if any of the following apply
+    a) the card to be played has color = Wild
+    b) both cards have the same color
+    c) both cards have the same number *)
   val is_compatable : t -> t -> bool
 end
 
