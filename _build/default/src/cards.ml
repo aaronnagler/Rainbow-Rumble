@@ -51,7 +51,7 @@ module Card : CardType = struct
   let get_color t =
     match t.color with
     | Red -> "Red"
-    | Blue -> "BLue"
+    | Blue -> "Blue"
     | Green -> "Green"
     | Yellow -> "Yellow"
     | Wild -> "Wild"
