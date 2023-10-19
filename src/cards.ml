@@ -43,6 +43,9 @@ module type CardType = sig
      a) the card to be played has color = Wild b) both cards have the same color
      c) both cards have the same number *)
   val is_compatable : t -> t -> bool
+
+  (* Returns a randomly generated card *)
+  val get_rand_card : t
 end
 
 module Card : CardType = struct
@@ -79,4 +82,27 @@ module Card : CardType = struct
     if a.color = Wild then true
     else if get_color a = get_color b || get_number a = get_number b then true
     else false
+
+  (* this should maybe be in list and not card *)
+  let get_rand_card =
+    let color_list = [ Wild; Red; Blue; Green; Yellow ] in
+    let numb_list =
+      [ NaN; Zero; One; Two; Three; Four; Five; Six; Seven; Eight; Nine ]
+    in
+    match Random.int 5 with
+    | 0 -> { color = Wild; number = NaN; property = Some "draw 4" }
+    | x -> (
+        match Random.int 11 with
+        | 0 ->
+            {
+              color = List.nth color_list x;
+              number = NaN;
+              property = Some "draw 2";
+            }
+        | y ->
+            {
+              color = List.nth color_list x;
+              number = List.nth numb_list y;
+              property = None;
+            })
 end
