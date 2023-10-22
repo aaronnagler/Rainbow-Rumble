@@ -1,2 +1,3 @@
 (library
- (name cards))
+ (name cards)
+ (public_name Cards))
