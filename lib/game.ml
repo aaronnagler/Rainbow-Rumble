@@ -10,7 +10,8 @@ module Game = struct
   let print_card (card : Card.t) : unit =
     let num = Card.get_number card in
     let col = Card.get_color card in
-    print_string ("[" ^ col ^ " " ^ num ^ "]")
+    let prop = Card.get_property card in
+    print_string ("[" ^ col ^ " " ^ num ^ " " ^ prop ^ "]")
 
   (* Prints the hands of the player_hand and the enemy hand. *)
   let print_hands (game : t) : unit =
