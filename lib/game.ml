@@ -6,8 +6,11 @@ module Game = struct
     enemy_hand : Card.t list;
   }
 
-  (* Prints [card] *)
-  let print_card (card : Card.t) : unit = print_string "[placeholder]"
+  (* Prints the color and number of [card]. Example output: "[Yellow 5]"*)
+  let print_card (card : Card.t) : unit =
+    let num = Card.get_number card in
+    let col = Card.get_color card in
+    print_string ("[" ^ col ^ " " ^ num ^ "]")
 
   (* Prints the hands of the player_hand and the enemy hand. *)
   let print_hands (game : t) : unit =
