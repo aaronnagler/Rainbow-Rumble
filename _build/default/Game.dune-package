@@ -1,0 +1,52 @@
+(lang dune 3.10)
+(name Game)
+(sections (lib .) (libexec .) (doc ../../doc/Game))
+(files
+ (lib
+  (META
+   cards.ml
+   dune-package
+   game.a
+   game.cma
+   game.cmi
+   game.cmt
+   game.cmx
+   game.cmxa
+   game.ml
+   game__.cmi
+   game__.cmt
+   game__.cmx
+   game__.ml
+   game__Cards.cmi
+   game__Cards.cmt
+   game__Cards.cmx
+   opam))
+ (libexec (game.cmxs))
+ (doc (README.md)))
+(library
+ (name Game)
+ (kind normal)
+ (archives (byte game.cma) (native game.cmxa))
+ (plugins (byte game.cma) (native game.cmxs))
+ (native_archives game.a)
+ (main_module_name Game)
+ (modes byte native)
+ (modules
+  (wrapped
+   (group
+    (alias
+     (obj_name game__)
+     (visibility public)
+     (kind alias)
+     (source (path Game__) (impl (path game__.ml-gen))))
+    (name Game)
+    (modules
+     (module
+      (obj_name game__Cards)
+      (visibility public)
+      (source (path Cards) (impl (path cards.ml))))
+     (module
+      (obj_name game)
+      (visibility public)
+      (source (path Game) (impl (path game.ml))))))
+   (wrapped true))))
