@@ -25,6 +25,7 @@ module Game = struct
     print_string "\nEnemy's hand:";
     List.iter print_card game.enemy_hand
 
+  (* Draws a card at random and adds it to the hand provided.*)
   let rec draw (hand : Cards.Card.t list) (n : int) : Cards.Card.t list =
     let local_rng = Random.State.make_self_init () in
     if n = 0 then hand
@@ -32,6 +33,8 @@ module Game = struct
       let random_card = Card.get_rand_card local_rng in
       draw (hand @ [ random_card ]) (n - 1)
 
+  (* Creates the hands for the player and enemy hands, drawing 7 cards for
+     each. *)
   let create_hands : t =
     let h1 = draw [] 7 in
     let h2 = draw [] 7 in
