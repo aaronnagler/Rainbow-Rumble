@@ -13,8 +13,13 @@ module Game = struct
     let prop = Card.get_property card in
     print_string ("[" ^ col ^ " " ^ num ^ " " ^ prop ^ "]")
 
+  (* Prints the player's hand. *)
+  let print_player_hand (game : t) : unit =
+    print_string "Player's hand:";
+    List.iter print_card game.player_hand
+
   (* Prints the hands of the player_hand and the enemy hand. *)
-  let print_hands (game : t) : unit =
+  let print_both_hands (game : t) : unit =
     print_string "Player's hand:";
     List.iter print_card game.player_hand;
     print_string "\nEnemy's hand:";
@@ -26,4 +31,9 @@ module Game = struct
     else
       let random_card = Card.get_rand_card local_rng in
       draw (hand @ [ random_card ]) (n - 1)
+
+  let create_hands : t =
+    let h1 = draw [] 7 in
+    let h2 = draw [] 7 in
+    { player_hand = h1; enemy_hand = h2 }
 end
