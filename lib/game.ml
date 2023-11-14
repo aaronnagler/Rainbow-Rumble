@@ -4,6 +4,7 @@ module Game = struct
   type t = {
     player_hand : Card.t list;
     enemy_hand : Card.t list;
+    deck : Card.t;
   }
 
   (* Prints the color and number of [card]. Example output: "[Yellow 5]"*)
@@ -33,10 +34,22 @@ module Game = struct
       let random_card = Card.get_rand_card local_rng in
       draw (hand @ [ random_card ]) (n - 1)
 
+  (* Returns true if the given card is a valid card to initialize the deck. *)
+  let is_valid_first_card (card : Card.t) : bool =
+    Card.get_color card <> "Wild"
+    && Card.get_number card <> "NaN"
+    && Card.get_property card = "None"
+
   (* Creates the hands for the player and enemy hands, drawing 7 cards for
      each. *)
   let create_hands : t =
     let h1 = draw [] 7 in
     let h2 = draw [] 7 in
-    { player_hand = h1; enemy_hand = h2 }
+    { player_hand = h1; enemy_hand = h2; deck = List.hd (draw [] 1) }
+
+  (* Returns true if a card can legally be played on the deck. *)
+  let is_legal_play (card : Card.t) (deck : Card.t) : bool =
+    if Card.get_color card = Card.get_color deck then true
+    else if Card.get_number card = Card.get_number deck then true
+    else Card.get_color card = "Wild"
 end
