@@ -1,5 +1,6 @@
 open Cards
 open Opp
+
 module Game = struct
   type t = {
     player_hand : Card.t array;
@@ -26,4 +27,5 @@ module Game = struct
     else
       let random_card = Card.get_rand_card local_rng in
       draw (hand @ [ random_card ]) (n - 1)
+  (* let play (hand : Cards.Card.t list) = *)
 end
