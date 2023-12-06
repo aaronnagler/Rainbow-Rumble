@@ -67,13 +67,43 @@ module Game = struct
     else if Card.get_number card = Card.get_number discard_pile then true
     else Card.get_color card = "Wild"
 
-  (* Given a LEGAL card to play, and the game, and a boolean "player" which
-     indicates whether the card is being played by a person [true] or by the
-     opponent [false], this function will play the card onto the discard_pile,
-     and will force any side effects of the card onto the other player, if
-     applicable. Returns a game with the updated hands and discard_piles for the
-     players. *)
-  let play_card (card : Card.t) (game : t) (player : bool) : t = failwith "bruh"
+  (* Removes [card] from [hand] Returns: [hand] without [card] *)
+  let rec remove_card (card : Card.t) = function
+    | [] -> []
+    | f :: rest when f = card -> rest
+    | f :: rest -> f :: remove_card card rest
+
+  (* Applies effect specified in [card.property] to [applier] hand, [affected]
+     hand or both. *)
+  let apply_effect (card : Card.t) (applier : Card.t list)
+      (affected : Card.t list) =
+    match Card.get_property_name card with
+    | "Draw 4" -> (applier, draw affected 4)
+    | "Draw 2" -> (applier, draw affected 2)
+    | _ -> (applier, affected)
+
+  (* Given a LEGAL card to play, the game, and a bool "player" which indicates
+     whether the card is being played by the player [true] or by the opponent
+     [false], this function will play the card onto the discard_pile, and will
+     force any side effects of the card onto the other player, if applicable.
+     Returns a game with the updated hands and discard_piles for the players. *)
+  let play_card (card : Card.t) (game : t) (player : bool) : t =
+    (* create new game state with: 1. Person playing card loses card [card] 2.
+       Set [game.discard_pile] to [card] 3. Apply effect to opposing player
+       (represented by [player]) *)
+    let new_player_hand, new_enemy_hand =
+      match player with
+      | true ->
+          apply_effect card game.player_hand (remove_card card game.enemy_hand)
+      | false ->
+          apply_effect card (remove_card card game.player_hand) game.enemy_hand
+    in
+    {
+      game with
+      player_hand = new_player_hand;
+      enemy_hand = new_enemy_hand;
+      discard_pile = card;
+    }
 
   (* let side_effect card = match Card.get_property card with | None -> None |
      in side_effect card *)
