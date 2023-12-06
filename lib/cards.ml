@@ -21,8 +21,8 @@ type numb =
 (* tuple (name, description) where name is the name of the property and
    description details the effect of the property *)
 type prop =
-  | Draw2 of string * string
-  | Draw4 of string * string
+  | Draw2
+  | Draw4
 
 type card = {
   color : color;
@@ -56,6 +56,9 @@ module type CardType = sig
 
   (* Returns a randomly generated card *)
   val get_rand_card : Random.State.t -> t
+
+  (* returns a card with specified color, number, and property *)
+  val make_card : string -> string -> string -> t
 end
 
 module Card : CardType = struct
@@ -87,17 +90,19 @@ module Card : CardType = struct
     let p = t.property in
     match p with
     | None -> "None"
-    | Some pro -> (
-        match pro with
-        | Draw2 (name, _) | Draw4 (name, _) -> name)
+    | Some prop -> (
+        match prop with
+        | Draw2 -> "Draw 2"
+        | Draw4 -> "Draw 4")
 
   let get_property_description t =
     let p = t.property in
     match p with
     | None -> "None"
-    | Some pro -> (
-        match pro with
-        | Draw2 (_, desc) | Draw4 (_, desc) -> desc)
+    | Some prop -> (
+        match prop with
+        | Draw2 -> "Opponent must draw 2 cards from the top of the deck"
+        | Draw4 -> "Opponent must draw 4 cards from the top of the deck")
 
   let is_compatable a b =
     if a.color = Wild then true
@@ -111,22 +116,14 @@ module Card : CardType = struct
       [ NaN; Zero; One; Two; Three; Four; Five; Six; Seven; Eight; Nine ]
     in
     match Random.State.int local_rng_state 5 with
-    | 0 ->
-        {
-          color = Wild;
-          number = NaN;
-          property =
-            Some (Draw4 ("Draw 4", "Opponent must draw 4 cards to their hand"));
-        }
+    | 0 -> { color = Wild; number = NaN; property = Some Draw4 }
     | x -> (
         match Random.State.int local_rng_state 11 with
         | 0 ->
             {
               color = List.nth color_list x;
               number = NaN;
-              property =
-                Some
-                  (Draw2 ("Draw 2", "Opponent must draw 2 cards to their hand"));
+              property = Some Draw2;
             }
         | y ->
             {
@@ -135,7 +132,7 @@ module Card : CardType = struct
               property = None;
             })
 
-  (** Given a string [color], returns the associated color. *)
+  (* Given a string [color], returns the associated color. *)
   let make_color (color : string) =
     match color with
     | "Red" -> Red
@@ -143,9 +140,9 @@ module Card : CardType = struct
     | "Green" -> Green
     | "Yellow" -> Yellow
     | "Wild" -> Wild
-    | _ -> failwith "Not a color"
+    | _ -> failwith "Not a valid color"
 
-  (** Given a string [numb], returns the associated number. *)
+  (* Given a string [numb], returns the associated number. *)
   let make_numb (numb : string) =
     match numb with
     | "0" -> Zero
@@ -159,11 +156,19 @@ module Card : CardType = struct
     | "8" -> Eight
     | "9" -> Nine
     | "NaN" -> NaN
-    | _ -> failwith "Not a numb"
+    | _ -> failwith "Not a valid numb"
 
-  (** Given a string prop, returns the associated number. *)
+  (* Given a string prop, returns the associated number. *)
+  let make_prop (prop : string) =
+    match prop with
+    | "None" -> None
+    | "Draw 2" -> Some Draw2
+    | "Draw 4" -> Some Draw4
+    | _ -> failwith "Not a valid prop"
 
-  (* returns a card with specified color, number, and property *)
   let make_card (color : string) (numb : string) (prop : string) : t =
-    failwith "skibidi"
+    let c = make_color color in
+    let n = make_numb numb in
+    let p = make_prop prop in
+    { color = c; number = n; property = p }
 end
