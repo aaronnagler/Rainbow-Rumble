@@ -1,10 +1,11 @@
 open Cards
+open Opp
 
 module Game = struct
   type t = {
     player_hand : Card.t list;
     enemy_hand : Card.t list;
-    discard_pile : Card.t;
+    mutable discard_pile : Card.t;
   }
 
   (* Prints the color and number of [card]. Example output: "[Yellow 5]"*)
@@ -24,7 +25,7 @@ module Game = struct
     print_string "Player's hand:";
     List.iter print_card game.player_hand;
     print_string "\nEnemy's hand:";
-    List.iter print_card game.enemy_hand
+    List.iter print_card game.player_hand
 
   (* Draws a card at random and adds it to the hand provided.*)
   let rec draw (hand : Card.t list) (n : int) : Card.t list =
