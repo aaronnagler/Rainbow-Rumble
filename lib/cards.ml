@@ -18,10 +18,16 @@ type numb =
   | Nine
   | NaN
 
+(* tuple (name, description) where name is the name of the property and
+   description details the effect of the property *)
+type prop =
+  | Draw2 of string * string
+  | Draw4 of string * string
+
 type card = {
   color : color;
   number : numb;
-  property : string option;
+  property : prop option;
 }
 
 module type CardType = sig
@@ -36,7 +42,11 @@ module type CardType = sig
 
   (* If the card has a property, return card property as a string. Returns
      "None" if the card has no property *)
-  val get_property : t -> string
+  val get_property_name : t -> string
+
+  (* If the card has a property, return card property as a string. Returns
+     "None" if the card has no property *)
+  val get_property_description : t -> string
 
   (* Return true if a card can be played on top of another card. Return false if
      not. A card can be played on top of another if any of the following apply
@@ -73,10 +83,21 @@ module Card : CardType = struct
     | Nine -> "9"
     | NaN -> "NaN"
 
-  let get_property t =
-    match t.property with
+  let get_property_name t =
+    let p = t.property in
+    match p with
     | None -> "None"
-    | Some p -> p
+    | Some pro -> (
+        match pro with
+        | Draw2 (name, _) | Draw4 (name, _) -> name)
+
+  let get_property_description t =
+    let p = t.property in
+    match p with
+    | None -> "None"
+    | Some pro -> (
+        match pro with
+        | Draw2 (_, desc) | Draw4 (_, desc) -> desc)
 
   let is_compatable a b =
     if a.color = Wild then true
@@ -90,14 +111,22 @@ module Card : CardType = struct
       [ NaN; Zero; One; Two; Three; Four; Five; Six; Seven; Eight; Nine ]
     in
     match Random.State.int local_rng_state 5 with
-    | 0 -> { color = Wild; number = NaN; property = Some "draw 4" }
+    | 0 ->
+        {
+          color = Wild;
+          number = NaN;
+          property =
+            Some (Draw4 ("Draw 4", "Opponent must draw 4 cards to their hand"));
+        }
     | x -> (
         match Random.State.int local_rng_state 11 with
         | 0 ->
             {
               color = List.nth color_list x;
               number = NaN;
-              property = Some "draw 2";
+              property =
+                Some
+                  (Draw2 ("Draw 2", "Opponent must draw 2 cards to their hand"));
             }
         | y ->
             {
@@ -105,4 +134,36 @@ module Card : CardType = struct
               number = List.nth numb_list y;
               property = None;
             })
+
+  (** Given a string [color], returns the associated color. *)
+  let make_color (color : string) =
+    match color with
+    | "Red" -> Red
+    | "Blue" -> Blue
+    | "Green" -> Green
+    | "Yellow" -> Yellow
+    | "Wild" -> Wild
+    | _ -> failwith "Not a color"
+
+  (** Given a string [numb], returns the associated number. *)
+  let make_numb (numb : string) =
+    match numb with
+    | "0" -> Zero
+    | "1" -> One
+    | "2" -> Two
+    | "3" -> Three
+    | "4" -> Four
+    | "5" -> Five
+    | "6" -> Six
+    | "7" -> Seven
+    | "8" -> Eight
+    | "9" -> Nine
+    | "NaN" -> NaN
+    | _ -> failwith "Not a numb"
+
+  (** Given a string prop, returns the associated number. *)
+
+  (* returns a card with specified color, number, and property *)
+  let make_card (color : string) (numb : string) (prop : string) : t =
+    failwith "skibidi"
 end
