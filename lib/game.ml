@@ -1,5 +1,6 @@
 open Cards
 open Opp
+include Cards
 
 module Game = struct
   type t = {
