@@ -44,7 +44,7 @@ let read_card s (game : Game.t) =
 let play_card s (game : Game.t) =
   match s with
   | "A" ->
-      if Game.is_legal_play (List.nth game.player_hand 1) game.deck then (
+      if Game.is_legal_play (List.nth game.player_hand 1) game.discard_pile then (
         print_endline "Card was played successfully!";
         game)
       else (
@@ -52,7 +52,7 @@ let play_card s (game : Game.t) =
           "Card could not be played, please try another card or draw a card.";
         game)
   | "B" ->
-      if Game.is_legal_play (List.nth game.player_hand 2) game.deck then (
+      if Game.is_legal_play (List.nth game.player_hand 2) game.discard_pile then (
         print_endline "Card was played successfully!";
         game)
       else (
@@ -60,7 +60,7 @@ let play_card s (game : Game.t) =
           "Card could not be played, please try another card or draw a card.";
         game)
   | "C" ->
-      if Game.is_legal_play (List.nth game.player_hand 3) game.deck then (
+      if Game.is_legal_play (List.nth game.player_hand 3) game.discard_pile then (
         print_endline "Card was played successfully!";
         game)
       else (
@@ -68,7 +68,7 @@ let play_card s (game : Game.t) =
           "Card could not be played, please try another card or draw a card.";
         game)
   | "D" ->
-      if Game.is_legal_play (List.nth game.player_hand 4) game.deck then (
+      if Game.is_legal_play (List.nth game.player_hand 4) game.discard_pile then (
         print_endline "Card was played successfully!";
         game)
       else (
@@ -76,7 +76,7 @@ let play_card s (game : Game.t) =
           "Card could not be played, please try another card or draw a card.";
         game)
   | "E" ->
-      if Game.is_legal_play (List.nth game.player_hand 5) game.deck then (
+      if Game.is_legal_play (List.nth game.player_hand 5) game.discard_pile then (
         print_endline "Card was played successfully!";
         game)
       else (
@@ -84,7 +84,7 @@ let play_card s (game : Game.t) =
           "Card could not be played, please try another card or draw a card.";
         game)
   | "F" ->
-      if Game.is_legal_play (List.nth game.player_hand 6) game.deck then (
+      if Game.is_legal_play (List.nth game.player_hand 6) game.discard_pile then (
         print_endline "Card was played successfully!";
         game)
       else (
@@ -92,7 +92,7 @@ let play_card s (game : Game.t) =
           "Card could not be played, please try another card or draw a card.";
         game)
   | "G" ->
-      if Game.is_legal_play (List.nth game.player_hand 7) game.deck then (
+      if Game.is_legal_play (List.nth game.player_hand 7) game.discard_pile then (
         print_endline "Card was played successfully!";
         game)
       else (
@@ -120,9 +120,9 @@ let stage_2 x =
 (* Upon the user's request, performs the given action and returns the updated
    game *)
 let rec game_process z (game : Game.t) =
-  print_endline "Below is the deck and your hand";
-  print_endline "Deck: ";
-  Game.print_card game.deck;
+  print_endline "Below is the discard_pile and your hand";
+  print_endline "discard_pile: ";
+  Game.print_card game.discard_pile;
   print_endline "\n  Hand: ";
   Game.print_player_hand game;
   print_endline
