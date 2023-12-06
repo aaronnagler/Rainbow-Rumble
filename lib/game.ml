@@ -73,17 +73,39 @@ module Game = struct
      and will force any side effects of the card onto the other player, if
      applicable. Returns a game with the updated hands and discard_piles for the
      players. *)
-  let play_card (card : Card.t) (game : t) (player : bool) : t = failwith "bruh"
+  let play_card (card : Card.t) (game : t) (player : bool) : t = game
 
   (* let side_effect card = match Card.get_property card with | None -> None |
      in side_effect card *)
   (* if person then () else *)
   (*The AI plays*)
 
+  (* draws a card to a players hand, takes in a boolean "player" which indicates
+     whether the card is being drawn to the person's hand [true] or by the
+     opponent [false] *)
+  let draw_update (game : t) (player : bool) : t =
+    match player with
+    | true ->
+        let h' = draw game.player_hand 1 in
+        {
+          player_hand = h';
+          enemy_hand = game.enemy_hand;
+          discard_pile = game.discard_pile;
+          difficulty = "";
+        }
+    | false ->
+        let h' = draw game.enemy_hand 1 in
+        {
+          player_hand = game.player_hand;
+          enemy_hand = h';
+          discard_pile = draw_valid_card is_valid_first_card;
+          difficulty = "";
+        }
+
   (* checks to see if enemy can play a card, if so, the enemy plays the card,
      else the enemy draws a card and sees if they can play card, else they do
      not any card during their turn. Returns the updated game. *)
-  let enemy_turn (game : t) : t = failwith "unimplemented"
+  let enemy_turn (game : t) : t = game
   (* let try_again game =
 
      let decide_course game = match AI.enemy_turn (game) with | Some enemy_card
