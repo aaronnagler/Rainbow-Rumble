@@ -5,7 +5,7 @@ module Game = struct
   type t = {
     player_hand : Card.t list;
     enemy_hand : Card.t list;
-    deck : Card.t;
+    mutable deck : Card.t;
   }
 
   (* Prints the color and number of [card]. Example output: "[Yellow 5]"*)
@@ -23,9 +23,9 @@ module Game = struct
   (* Prints the hands of the player_hand and the enemy hand. *)
   let print_both_hands (game : t) : unit =
     print_string "Player's hand:";
-    List.iter print_card (Array.to_list game.player_hand);
+    List.iter print_card game.player_hand;
     print_string "\nEnemy's hand:";
-    List.iter print_card (Array.to_list game.enemy_hand)
+    List.iter print_card game.player_hand
 
   (* Draws a card at random and adds it to the hand provided.*)
   let rec draw (hand : Card.t list) (n : int) : Card.t list =
