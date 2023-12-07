@@ -172,11 +172,9 @@ module Card : CardType = struct
     let n = make_numb numb in
     let p = make_prop prop in
     { color = c; number = n; property = p }
-    
-    (**)
-    let filter_normal_cards (hand : t list) : t list = failwith "Unimplemented"
 
-    let filter_special_cards (hand : t list) : t list = failwith "Unimplemented"
-
-    let filter_wild_cards (hand : t list) : t list = failwith "Unimplemented"
+  (**)
+  let filter_normal_cards (hand : t list) : t list = failwith "Unimplemented"
+  let filter_special_cards (hand : t list) : t list = failwith "Unimplemented"
+  let filter_wild_cards (hand : t list) : t list = failwith "Unimplemented"
 end
