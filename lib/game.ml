@@ -83,6 +83,13 @@ module Game = struct
      Card.get_number card = Card.get_number discard_pile then true else
      Card.get_color card = "Wild" *)
 
+  (* If discard pile card is a card of color Wild, transforms card color to
+     user-described color [new_color] *)
+  let transform_pile_wild (game : t) (new_color : string) : t =
+    let new_prop = Card.get_property_name game.discard_pile in
+    let new_card = Card.make_card new_color "NaN" new_prop in
+    { game with discard_pile = new_card }
+
   (* Removes [card] from [hand] Returns: [hand] without [card] *)
   let rec remove_card (card : Card.t) = function
     | [] -> []
