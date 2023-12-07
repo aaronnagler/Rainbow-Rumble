@@ -116,7 +116,8 @@ module Card : CardType = struct
       [ NaN; Zero; One; Two; Three; Four; Five; Six; Seven; Eight; Nine ]
     in
     match Random.State.int local_rng_state 5 with
-    | 0 -> { color = Wild; number = NaN; property = Some Draw4 }
+    | 0 -> { color = Wild; number = NaN; property = None }
+    | 1 -> { color = Wild; number = NaN; property = Some Draw4 }
     | x -> (
         match Random.State.int local_rng_state 11 with
         | 0 ->
@@ -171,4 +172,11 @@ module Card : CardType = struct
     let n = make_numb numb in
     let p = make_prop prop in
     { color = c; number = n; property = p }
+    
+    (**)
+    let filter_normal_cards (hand : t list) : t list = failwith "Unimplemented"
+
+    let filter_special_cards (hand : t list) : t list = failwith "Unimplemented"
+
+    let filter_wild_cards (hand : t list) : t list = failwith "Unimplemented"
 end
