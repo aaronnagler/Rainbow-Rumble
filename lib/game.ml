@@ -76,9 +76,25 @@ module Game = struct
 
   (* Returns true if a card can legally be played on the discard_pile. *)
   let is_legal_play (card : Card.t) (discard_pile : Card.t) : bool =
-    if Card.get_color card = Card.get_color discard_pile then true
-    else if Card.get_number card = Card.get_number discard_pile then true
-    else Card.get_color card = "Wild"
+    let same_color, same_number =
+      ( Card.get_color card = Card.get_color discard_pile,
+        Card.get_number card = Card.get_number discard_pile )
+    in
+    match (same_color, same_number) with
+    | true, _ | _, true -> true
+    | false, false -> Card.get_property_name discard_pile = "None"
+
+  (* Old Stuff *)
+  (* if Card.get_color card = Card.get_color discard_pile then true else if
+     Card.get_number card = Card.get_number discard_pile then true else
+     Card.get_color card = "Wild" *)
+
+  (* If discard pile card is a card of color Wild, transforms card color to
+     user-described color [new_color] *)
+  let transform_pile_wild (game : t) (new_color : string) : t =
+    let new_prop = Card.get_property_name game.discard_pile in
+    let new_card = Card.make_card new_color "NaN" new_prop in
+    { game with discard_pile = new_card }
 
   (* Removes [card] from [hand] Returns: [hand] without [card] *)
   let rec remove_card (card : Card.t) = function

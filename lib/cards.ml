@@ -57,6 +57,12 @@ module type CardType = sig
   (* Returns a randomly generated card *)
   val get_rand_card : Random.State.t -> t
 
+  (* Given a string [numb], returns the associated number. *)
+  val make_numb : string -> numb
+
+  (* Given a string prop, returns the associated number. *)
+  val make_prop : string -> prop option
+
   (* returns a card with specified color, number, and property *)
   val make_card : string -> string -> string -> t
 end
@@ -159,7 +165,6 @@ module Card : CardType = struct
     | "NaN" -> NaN
     | _ -> failwith "Not a valid numb"
 
-  (* Given a string prop, returns the associated number. *)
   let make_prop (prop : string) =
     match prop with
     | "None" -> None

@@ -18,18 +18,38 @@ let read_card s (game : Game.t) =
 (* Returns the updated game after the function plays the card corresponding to
    user input (A-F) if the card is valid, if not, does not play the card, and
    prints corresponding statement *)
+
+(* let play_card s (game : Game.t) = if Game.is_legal_play (List.nth
+   game.player_hand (int_of_string s)) game.discard_pile then ( print_endline
+   "Card was played successfully!"; let new_game_state = Game.play_card
+   (List.nth game.player_hand (int_of_string s)) game true in if Card.get_color
+   new_game_state.discard_pile = "Wild" then let input = read_line () in
+   Game.transform_pile_wild new_game_state input else new_game_state) else (
+   print_endline "Card could not be played, please try another card or draw a
+   card."; game) *)
+
+(* Same thing as above [play_card], but with pattern matching instead of
+   if-statements ( +2 lines :D )*)
 let play_card s (game : Game.t) =
-  if
+  match
     Game.is_legal_play
       (List.nth game.player_hand (int_of_string s))
       game.discard_pile
-  then (
-    print_endline "Card was played successfully!";
-    Game.play_card (List.nth game.player_hand (int_of_string s)) game true)
-  else (
-    print_endline
-      "Card could not be played, please try another card or draw a card.";
-    game)
+  with
+  | true -> (
+      let new_game_state =
+        Game.play_card (List.nth game.player_hand (int_of_string s)) game true
+      in
+      match Card.get_color new_game_state.discard_pile with
+      | "Wild" ->
+          print_endline "Choose new color for wild card: \n";
+          let input = read_line () in
+          Game.transform_pile_wild new_game_state input
+      | _ -> new_game_state)
+  | false ->
+      print_endline
+        "Card could not be played, please try another card or draw a card.";
+      game
 
 (* Draws a card to the players hand, returns the updated game *)
 let draw_card (game : Game.t) =
