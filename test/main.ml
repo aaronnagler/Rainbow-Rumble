@@ -38,6 +38,71 @@ let card_tests =
         (get_property_description (make_card "Wild" "NaN" "Draw 4")) );
   ]
 
-let game_tests = []
-let suite = "test suite for cards" >::: List.flatten [ card_tests; game_tests ]
+let legal_play_tests =
+  [
+    ( "is_legal_play matching colors" >:: fun _ ->
+      assert_equal true
+        (Game.is_legal_play
+           (make_card "Blue" "3" "None")
+           (make_card "Blue" "0" "None")) );
+    ( "is_legal_play matching colors, playing on draw 2" >:: fun _ ->
+      assert_equal true
+        (Game.is_legal_play
+           (make_card "Red" "NaN" "Draw 2")
+           (make_card "Red" "0" "None")) );
+    ( "is_legal_play matching colors, playing draw 2 " >:: fun _ ->
+      assert_equal true
+        (Game.is_legal_play
+           (make_card "Green" "NaN" "Draw 2")
+           (make_card "Green" "0" "None")) );
+    ( "is_legal_play matching colors, playing draw 2 on draw 2 " >:: fun _ ->
+      assert_equal true
+        (Game.is_legal_play
+           (make_card "Green" "NaN" "Draw 2")
+           (make_card "Green" "NaN" "Draw 2")) );
+    ( "is_legal_play different colors, playing draw 2 on draw 2 " >:: fun _ ->
+      assert_equal true
+        (Game.is_legal_play
+           (make_card "Blue" "NaN" "Draw 2")
+           (make_card "Green" "NaN" "Draw 2")) );
+    ( "is_legal_play different colors, playing draw 2 " >:: fun _ ->
+      assert_equal false
+        (Game.is_legal_play
+           (make_card "Blue" "NaN" "Draw 2")
+           (make_card "Green" "5" "None")) );
+    ( "is_legal_play different colors, different numbers" >:: fun _ ->
+      assert_equal false
+        (Game.is_legal_play
+           (make_card "Blue" "3" "None")
+           (make_card "Green" "4" "None")) );
+    ( "is_legal_play same numbers, same colors" >:: fun _ ->
+      assert_equal true
+        (Game.is_legal_play
+           (make_card "Blue" "8" "None")
+           (make_card "Blue" "8" "None")) );
+    ( "is_legal_play same numbers, different colors" >:: fun _ ->
+      assert_equal true
+        (Game.is_legal_play
+           (make_card "Blue" "8" "None")
+           (make_card "Red" "8" "None")) );
+    ( "is_legal_play playing draw 4 on number" >:: fun _ ->
+      assert_equal true
+        (Game.is_legal_play
+           (make_card "Wild" "NaN" "Draw 4")
+           (make_card "Red" "8" "None")) );
+    ( "is_legal_play playing draw 4 on draw 2" >:: fun _ ->
+      assert_equal true
+        (Game.is_legal_play
+           (make_card "Wild" "NaN" "Draw 4")
+           (make_card "Red" "NaN" "Draw 2")) );
+    ( "is_legal_play playing draw 4 on draw 4" >:: fun _ ->
+      assert_equal true
+        (Game.is_legal_play
+           (make_card "Wild" "NaN" "Draw 4")
+           (make_card "Wild" "NaN" "Draw 4")) );
+  ]
+
+let suite =
+  "test suite for cards" >::: List.flatten [ card_tests; legal_play_tests ]
+
 let () = run_test_tt_main suite
