@@ -18,9 +18,15 @@ module Game = struct
     print_string ("[" ^ col ^ " " ^ num ^ " " ^ prop ^ "]")
 
   (* Prints the player's hand. *)
-  let print_player_hand (game : t) : unit =
-    print_string "Player's hand:";
-    List.iter print_card game.player_hand
+  let rec print_player_hand (hand : Card.t list) (acc : int) : unit =
+    match hand with
+    | [] -> ()
+    | h :: t ->
+        print_string " ";
+        print_int acc;
+        print_string ".";
+        print_card h;
+        print_player_hand t (acc + 1)
 
   (* Prints the hands of the player_hand and the enemy hand. *)
   let print_both_hands (game : t) : unit =
@@ -89,15 +95,15 @@ module Game = struct
      force any side effects of the card onto the other player, if applicable.
      Returns a game with the updated hands and discard_piles for the players. *)
   let play_card (card : Card.t) (game : t) (player : bool) : t =
-    (* create new game state with: 1. Person playing card loses card [card] 2.
+    (* create new game state with: 1. Person playi ng card loses card [card] 2.
        Set [game.discard_pile] to [card] 3. Apply effect to opposing player
        (represented by [player]) *)
     let new_player_hand, new_enemy_hand =
       match player with
       | true ->
-          apply_effect card game.player_hand (remove_card card game.enemy_hand)
-      | false ->
           apply_effect card (remove_card card game.player_hand) game.enemy_hand
+      | false ->
+          apply_effect card (remove_card card game.enemy_hand) game.player_hand
     in
     {
       game with

@@ -12,96 +12,24 @@ let rec repl (eval : string -> string) : unit =
 
 (* Based on the input (A-G) prints the corresponding card. *)
 let read_card s (game : Game.t) =
-  match s with
-  | "A" ->
-      Game.print_card (List.nth game.player_hand 1);
-      game
-  | "B" ->
-      Game.print_card (List.nth game.player_hand 2);
-      game
-  | "C" ->
-      Game.print_card (List.nth game.player_hand 3);
-      game
-  | "D" ->
-      Game.print_card (List.nth game.player_hand 4);
-      game
-  | "E" ->
-      Game.print_card (List.nth game.player_hand 5);
-      game
-  | "F" ->
-      Game.print_card (List.nth game.player_hand 6);
-      game
-  | "G" ->
-      Game.print_card (List.nth game.player_hand 7);
-      game
-  | _ ->
-      print_endline "please enter a proper card label";
-      game
+  Game.print_card (List.nth game.player_hand (int_of_string s));
+  game
 
 (* Returns the updated game after the function plays the card corresponding to
    user input (A-F) if the card is valid, if not, does not play the card, and
    prints corresponding statement *)
 let play_card s (game : Game.t) =
-  match s with
-  | "A" ->
-      if Game.is_legal_play (List.nth game.player_hand 1) game.discard_pile then (
-        print_endline "Card was played successfully!";
-        Game.play_card (List.nth game.player_hand 1) game true)
-      else (
-        print_endline
-          "Card could not be played, please try another card or draw a card.";
-        game)
-  | "B" ->
-      if Game.is_legal_play (List.nth game.player_hand 2) game.discard_pile then (
-        print_endline "Card was played successfully!";
-        Game.play_card (List.nth game.player_hand 2) game true)
-      else (
-        print_endline
-          "Card could not be played, please try another card or draw a card.";
-        game)
-  | "C" ->
-      if Game.is_legal_play (List.nth game.player_hand 3) game.discard_pile then (
-        print_endline "Card was played successfully!";
-        Game.play_card (List.nth game.player_hand 3) game true)
-      else (
-        print_endline
-          "Card could not be played, please try another card or draw a card.";
-        game)
-  | "D" ->
-      if Game.is_legal_play (List.nth game.player_hand 4) game.discard_pile then (
-        print_endline "Card was played successfully!";
-        Game.play_card (List.nth game.player_hand 4) game true)
-      else (
-        print_endline
-          "Card could not be played, please try another card or draw a card.";
-        game)
-  | "E" ->
-      if Game.is_legal_play (List.nth game.player_hand 5) game.discard_pile then (
-        print_endline "Card was played successfully!";
-        Game.play_card (List.nth game.player_hand 5) game true)
-      else (
-        print_endline
-          "Card could not be played, please try another card or draw a card.";
-        game)
-  | "F" ->
-      if Game.is_legal_play (List.nth game.player_hand 6) game.discard_pile then (
-        print_endline "Card was played successfully!";
-        Game.play_card (List.nth game.player_hand 6) game true)
-      else (
-        print_endline
-          "Card could not be played, please try another card or draw a card.";
-        game)
-  | "G" ->
-      if Game.is_legal_play (List.nth game.player_hand 7) game.discard_pile then (
-        print_endline "Card was played successfully!";
-        Game.play_card (List.nth game.player_hand 7) game true)
-      else (
-        print_endline
-          "Card could not be played, please try another card or draw a card.";
-        game)
-  | _ ->
-      print_endline "please enter a proper card label";
-      game
+  if
+    Game.is_legal_play
+      (List.nth game.player_hand (int_of_string s))
+      game.discard_pile
+  then (
+    print_endline "Card was played successfully!";
+    Game.play_card (List.nth game.player_hand (int_of_string s)) game true)
+  else (
+    print_endline
+      "Card could not be played, please try another card or draw a card.";
+    game)
 
 (* Draws a card to the players hand, returns the updated game *)
 let draw_card (game : Game.t) =
@@ -125,7 +53,7 @@ let rec game_process z (game : Game.t) =
   print_endline "        Discard Pile: \n";
   Game.print_card game.discard_pile;
   print_endline "\n \n        Hand: \n ";
-  Game.print_player_hand game;
+  Game.print_player_hand game.player_hand 0;
   print_endline "\n";
   print_endline
     "    You have the following input choices:\n\
@@ -135,11 +63,13 @@ let rec game_process z (game : Game.t) =
   print_string "> ";
   match stage_2 () with
   | "play" ->
-      print_endline "select a card A-G";
+      print_endline
+        "please enter a number corresponding to the label of the card";
       print_string "> ";
       game_process () (play_card (read_line ()) game)
   | "read" ->
-      print_endline "select a card A-G";
+      print_endline
+        "please enter a number corresponding to the label of the card";
       print_string "> ";
       game_process () (read_card (read_line ()) game)
   | "draw" -> game_process () (draw_card game)
@@ -158,9 +88,7 @@ let stage_1 x =
     \    At the moment, you can type the following commands:";
   print_endline "      - rules";
   print_endline "      - start game";
-  print_endline "      - quit";
-  print_endline
-    "To exit the game, you can press enter without entering any command";
+  print_endline "To exit the game, you can press control-c";
   print_string "> ";
   match read_line () with
   | "rules" ->
@@ -207,7 +135,6 @@ let stage_1 x =
       \            the discard pile\n\
       \      "
   | "start game" -> "I hope you have fun!"
-  | "quit" -> "Quitting the game..."
   | _ -> "please enter a valid input"
 
 (* Takes user's input in the starting stage of the game and either begins the
@@ -223,6 +150,8 @@ let rec start_menu z =
 (*********** command line interface ***********)
 let () =
   print_endline "Welcome to Rainbow Card Rumble!";
+  print_endline
+    "Please put your ternimal into full screen for the best experience!";
   print_endline (start_menu ());
   print_endline (game_process () Game.create_hands)
 
