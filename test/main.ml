@@ -38,5 +38,6 @@ let card_tests =
         (get_property_description (make_card "Wild" "NaN" "Draw 4")) );
   ]
 
-let suite = "test suite for cards" >::: List.flatten [ card_tests ]
+let game_tests = []
+let suite = "test suite for cards" >::: List.flatten [ card_tests; game_tests ]
 let () = run_test_tt_main suite

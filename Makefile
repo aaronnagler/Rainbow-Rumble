@@ -16,7 +16,7 @@ utop:
 test:
 	OCAMLRUNPARAM=b dune exec test/main.exe
 
-manager:
+game:
 	OCAMLRUNPARAM=b dune exec bin/manager.exe
 
 check:
