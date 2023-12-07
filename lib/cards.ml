@@ -141,12 +141,12 @@ module Card : CardType = struct
 
   (* Given a string [color], returns the associated color. *)
   let make_color (color : string) =
-    match color with
-    | "Red" -> Red
-    | "Blue" -> Blue
-    | "Green" -> Green
-    | "Yellow" -> Yellow
-    | "Wild" -> Wild
+    match String.lowercase_ascii color with
+    | "red" -> Red
+    | "blue" -> Blue
+    | "green" -> Green
+    | "yellow" -> Yellow
+    | "wild" -> Wild
     | _ -> failwith "Not a valid color"
 
   (* Given a string [numb], returns the associated number. *)

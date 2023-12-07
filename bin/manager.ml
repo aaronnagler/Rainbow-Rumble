@@ -12,7 +12,15 @@ let rec repl (eval : string -> string) : unit =
 
 (* Based on the input (A-G) prints the corresponding card. *)
 let read_card s (game : Game.t) =
-  Game.print_card (List.nth game.player_hand (int_of_string s));
+  let c = List.nth game.player_hand (int_of_string s) in
+  print_endline "\n";
+  Game.print_card c;
+  let s =
+    "\n" ^ "\n" ^ Card.get_property_name c ^ ": "
+    ^ Card.get_property_description c
+    ^ "\n"
+  in
+  print_endline s;
   game
 
 (* Returns the updated game after the function plays the card corresponding to
@@ -42,7 +50,7 @@ let play_card s (game : Game.t) =
       in
       match Card.get_color new_game_state.discard_pile with
       | "Wild" ->
-          print_endline "Choose new color for wild card: \n";
+          print_endline "Choose new color for wild card: ";
           let input = read_line () in
           Game.transform_pile_wild new_game_state input
       | _ -> new_game_state)
