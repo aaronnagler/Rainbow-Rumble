@@ -173,6 +173,7 @@ module Card : CardType = struct
     let p = make_prop prop in
     { color = c; number = n; property = p }
     
+    (**)
     let filter_normal_cards (hand : t list) : t list = failwith "Unimplemented"
 
     let filter_special_cards (hand : t list) : t list = failwith "Unimplemented"
