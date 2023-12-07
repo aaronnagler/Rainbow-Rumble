@@ -29,7 +29,7 @@ module AI = struct
   (*If player has 3 or less cards and enemy has 4 or more, the enemy will
     attempt to sabotage the player such as using special cards or using a wild
     to change the player's wild card*)
-  let rec strategy_3 (enemy_hand : Card.t list) : Card.t =
+  let rec strategy_3 (enemy_hand : Card.t list) : Card.t option =
     failwith "Unimplemented"
 
   (*Given a hand, certain cards in the enemy's hand will have priority in being
@@ -41,13 +41,13 @@ module AI = struct
     | [] -> None
     | _ -> (
         match (List.length enemy_hand <= 4, player_hand_num <= 4) with
-        | true, true -> Some (strategy_1 enemy_hand)
-        | false, true -> Some (strategy_2 enemy_hand)
-        | true, false -> Some (strategy_3 enemy_hand)
+        | true, true -> strategy_1 enemy_hand
+        | false, true -> strategy_2 enemy_hand
+        | true, false -> strategy_3 enemy_hand
         | _ -> (
             match Random.int 2 with
-            | 0 -> Some (strategy_2 enemy_hand)
-            | _ -> Some (strategy_3 enemy_hand)))
+            | 0 -> strategy_2 enemy_hand
+            | _ -> strategy_3 enemy_hand))
 
   (* The enemy will attempt to select a playable card from their hand. If
      succesful, return the card it will playx from its hand. Otherwise return

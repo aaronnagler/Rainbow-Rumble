@@ -164,8 +164,7 @@ let stage_1 x =
   print_string "> ";
   match read_line () with
   | "rules" ->
-      "\n\
-      \ The rules of the game are as followed:\n\
+      "The rules of the game are as followed:\n\
       \      At a very high level, you have a hand of cards and your objective \
        is to\n\
       \      have 0 cards in your hand before your opponent, a computer. This \
@@ -205,12 +204,8 @@ let stage_1 x =
       \            OR \n\
       \            - the card you are playing must be of the same color as the \
        card on\n\
-      \            the discard pile. If the card on the discard pile is a wild\n\
-      \                    card, then it is every color and so your card can \
-       always be \n\
-      \                    played. \n\
-      \                - if the card is a wild card:\n\
-      \                    - you can play it onto any card"
+      \            the discard pile\n\
+      \      "
   | "start game" -> "I hope you have fun!"
   | "quit" -> "Quitting the game..."
   | _ -> "please enter a valid input"
