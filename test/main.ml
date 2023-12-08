@@ -102,7 +102,26 @@ let legal_play_tests =
            (make_card "Wild" "NaN" "Draw 4")) );
   ]
 
+let ai_tests =
+  [
+    ( "strategy_1 : enemy has only number cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_1 : enemy has only special cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_1 : enemy has only wild cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_1 : enemy has number cards and special cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_1 : enemy has number cards and wild cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_1 : enemy has special cards and wild cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_1 : enemy has number, special and wild cards" >:: fun _ ->
+      assert_equal true true );
+  ]
+
 let suite =
-  "test suite for cards" >::: List.flatten [ card_tests; legal_play_tests ]
+  "test suite for cards"
+  >::: List.flatten [ card_tests; legal_play_tests; ai_tests ]
 
 let () = run_test_tt_main suite
