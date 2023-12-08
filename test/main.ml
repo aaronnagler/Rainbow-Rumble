@@ -2,6 +2,75 @@ open OUnit2
 open Game
 open Card
 
+(*All Number Cards*)
+let num_cards =
+  [
+    (*Red*)
+    { color = Red; number = Zero; property = None };
+    { color = Red; number = One; property = None };
+    { color = Red; number = Two; property = None };
+    { color = Red; number = Three; property = None };
+    { color = Red; number = Four; property = None };
+    { color = Red; number = Five; property = None };
+    { color = Red; number = Six; property = None };
+    { color = Red; number = Seven; property = None };
+    { color = Red; number = Eight; property = None };
+    { color = Red; number = Nine; property = None };
+    (*Blue*)
+    { color = Blue; number = Zero; property = None };
+    { color = Blue; number = One; property = None };
+    { color = Blue; number = Two; property = None };
+    { color = Blue; number = Three; property = None };
+    { color = Blue; number = Four; property = None };
+    { color = Blue; number = Five; property = None };
+    { color = Blue; number = Six; property = None };
+    { color = Blue; number = Seven; property = None };
+    { color = Blue; number = Eight; property = None };
+    { color = Blue; number = Nine; property = None };
+    (*Green*)
+    { color = Green; number = Zero; property = None };
+    { color = Green; number = One; property = None };
+    { color = Green; number = Two; property = None };
+    { color = Green; number = Three; property = None };
+    { color = Green; number = Four; property = None };
+    { color = Green; number = Five; property = None };
+    { color = Green; number = Six; property = None };
+    { color = Green; number = Seven; property = None };
+    { color = Green; number = Eight; property = None };
+    { color = Green; number = Nine; property = None };
+    (*Yellow*)
+    { color = Yellow; number = Zero; property = None };
+    { color = Yellow; number = One; property = None };
+    { color = Yellow; number = Two; property = None };
+    { color = Yellow; number = Three; property = None };
+    { color = Yellow; number = Four; property = None };
+    { color = Yellow; number = Five; property = None };
+    { color = Yellow; number = Six; property = None };
+    { color = Yellow; number = Seven; property = None };
+    { color = Yellow; number = Eight; property = None };
+    { color = Yellow; number = Nine; property = None };
+  ]
+
+(*All Special Cards*)
+let special_cards =
+  [
+    { color = Red; number = NaN; property = Some Draw2 };
+    { color = Blue; number = NaN; property = Some Draw2 };
+    { color = Green; number = NaN; property = Some Draw2 };
+    { color = Yellow; number = NaN; property = Some Draw2 };
+    { color = Wild; number = NaN; property = Some Draw2 };
+  ]
+
+(*All Wild Cards*)
+let wild_cards =
+  [
+    { color = Wild; number = NaN; property = None };
+    { color = Wild; number = NaN; property = Some Draw4 };
+  ]
+
+(*Full All Cards*)
+let all_cards = num_cards @ special_cards @ wild_cards
+
 let card_tests =
   [
     ( "get_color regular card" >:: fun _ ->
@@ -38,8 +107,9 @@ let card_tests =
         (get_property_description (make_card "Wild" "NaN" "Draw 4")) );
   ]
 
-let legal_play_tests =
+let game_tests =
   [
+    (*is_legal_play tests*)
     ( "is_legal_play matching colors" >:: fun _ ->
       assert_equal true
         (Game.is_legal_play
@@ -117,10 +187,13 @@ let legal_play_tests =
            (make_card "Yellow" "Wild" "None")) );
   ]
 
-let ai_tests =
+let opp_tests =
   [
+    (*strategy 1*)
     ( "strategy_1 : enemy has only number cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some { color = Red; number = Zero; property = None })
+        (Some { color = Red; number = Zero; property = None }) );
     ( "strategy_1 : enemy has only special cards" >:: fun _ ->
       assert_equal true true );
     ( "strategy_1 : enemy has only wild cards" >:: fun _ ->
@@ -133,10 +206,39 @@ let ai_tests =
       assert_equal true true );
     ( "strategy_1 : enemy has number, special and wild cards" >:: fun _ ->
       assert_equal true true );
+    (*strategy 2*)
+    ( "strategy_2 : enemy has only number cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_2 : enemy has only special cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_2 : enemy has only wild cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_2 : enemy has number cards and special cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_2 : enemy has number cards and wild cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_2 : enemy has special cards and wild cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_2 : enemy has number, special and wild cards" >:: fun _ ->
+      assert_equal true true );
+    (*strategy 3*)
+    ( "strategy_3 : enemy has only number cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_3 : enemy has only special cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_3 : enemy has only wild cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_3 : enemy has number cards and special cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_3 : enemy has number cards and wild cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_3 : enemy has special cards and wild cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_3 : enemy has number, special and wild cards" >:: fun _ ->
+      assert_equal true true );
   ]
 
 let suite =
-  "test suite for cards"
-  >::: List.flatten [ card_tests; legal_play_tests; ai_tests ]
+  "test suite for cards" >::: List.flatten [ card_tests; game_tests; opp_tests ]
 
 let () = run_test_tt_main suite
