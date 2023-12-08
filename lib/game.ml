@@ -77,16 +77,16 @@ module Game = struct
     let c = draw [] 1 in
     if f (List.hd c) then List.hd c else draw_valid_card f
 
-  (* Creates the hands for the player and enemy hands, drawing 7 cards for
-     each. *)
-  let create_hands : t =
+  (* Initializes game state. Depending on difficulty [d], creates player and
+     enemy hands by drawing 7 cards for each. *)
+  let create_hands (d : string) : t =
     let h1 = draw [] 7 in
     let h2 = draw [] 7 in
     {
       player_hand = h1;
       enemy_hand = h2;
       discard_pile = draw_valid_card is_valid_first_card;
-      difficulty = "Easy";
+      difficulty = d;
     }
 
   (* Returns true if a card can legally be played on the discard_pile. *)
@@ -175,14 +175,17 @@ module Game = struct
      else the enemy draws a card and sees if they can play card, else they do
      not any card during their turn. Returns the updated game. *)
   let enemy_turn (game : t) = failwith "Unimplemented"
-      
-    (* game in
-  (* NOTE: INCOMPLETE! *)
-  match AI.enemy_turn game.enemy_hand game.difficulty game.discard_pile (List.length
-     game.enemy_hand) with | Some x -> game | None -> game *)
+
+  (* game in (* NOTE: INCOMPLETE! *) match AI.enemy_turn game.enemy_hand
+     game.difficulty game.discard_pile (List.length game.enemy_hand) with | Some
+     x -> game | None -> game *)
   (* let try_again game =
 
      let decide_course game = match AI.enemy_turn (game) with | Some enemy_card
      -> (play_card enemy_card game false) | None -> try_again in game.enemy_hand
      = enemy_updated_hand; game *)
+
+  (* Checks if either player or opponent meets the win condition: if they have 0
+     cards in their hand *)
+  let check_winner (game : t) = failwith "Unimplemented"
 end
