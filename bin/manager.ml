@@ -199,6 +199,8 @@ let rec set_difficulty () =
       "hard"
   | _ -> set_difficulty ()
 
+(* Upon game completion, givens player option to play again or go to main
+   menu *)
 let rec play_again () =
   print_endline "What do you want to do now?";
   print_endline "0. Play again";
