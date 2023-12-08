@@ -177,9 +177,6 @@ let rec start_menu z =
 
 (*********** command line interface ***********)
 let () =
-  (* testing code for color outputs - Derek *)
-  (* Game.print_colored_text "red" "Merry "; Game.print_colored_text "green"
-     "Christmas\n"; Game.print_colored_text "red" "losers"; *)
   print_endline "Welcome to Rainbow Card Rumble!";
   print_endline
     "Please put your ternimal into full screen for the best experience!";
