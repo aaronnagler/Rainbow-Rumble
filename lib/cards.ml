@@ -49,12 +49,6 @@ module type CardType = sig
      "None" if the card has no property *)
   val get_property_description : t -> string
 
-  (* Return true if a card can be played on top of another card. Return false if
-     not. A card can be played on top of another if any of the following apply
-     a) the card to be played has color = Wild b) both cards have the same color
-     c) both cards have the same number *)
-  val is_compatable : t -> t -> bool
-
   (* Returns a randomly generated card *)
   val get_rand_card : Random.State.t -> t
 
@@ -123,11 +117,6 @@ module Card : CardType = struct
         match prop with
         | Draw2 -> "Opponent must draw 2 cards from the top of the deck"
         | Draw4 -> "Opponent must draw 4 cards from the top of the deck")
-
-  let is_compatable a b =
-    if a.color = Wild then true
-    else if get_color a = get_color b || get_number a = get_number b then true
-    else false
 
   (* this should maybe be in list and not card *)
   let get_rand_card local_rng_state =
@@ -217,25 +206,22 @@ module Card : CardType = struct
         | _ -> false)
       hand
 
-      let most_common_color (hand : t list) : color =
-        let rec increment_color acc hand =
-          match hand with
-          | [] -> ()
-          | h :: t ->
+  let most_common_color (hand : t list) : color =
+    let rec increment_color acc hand =
+      match hand with
+      | [] -> ()
+      | h :: t -> (
           match h.color with
-          | Red -> acc.(0) <- acc.(0) + 1;
-          | Blue -> acc.(1) <- acc.(1) + 1;
-          | Green -> acc.(2) <- acc.(2) + 1;
-          | Yellow -> acc.(3) <- acc.(3) + 1;
-          | Wild -> ()
-        in
-        let acc = [|0;0;0;0|] in
-        increment_color acc hand;
-        if acc.(0) >= acc.(1) && acc.(0) >= acc.(2) && acc.(0) >= acc.(3) then Red else
-          if acc.(1) >= acc.(2) && acc.(1) >= acc.(3) then Blue else
-            if acc.(2) >= acc.(3) then Green
-            else Yellow
-
-          
-
+          | Red -> acc.(0) <- acc.(0) + 1
+          | Blue -> acc.(1) <- acc.(1) + 1
+          | Green -> acc.(2) <- acc.(2) + 1
+          | Yellow -> acc.(3) <- acc.(3) + 1
+          | Wild -> ())
+    in
+    let acc = [| 0; 0; 0; 0 |] in
+    increment_color acc hand;
+    if acc.(0) >= acc.(1) && acc.(0) >= acc.(2) && acc.(0) >= acc.(3) then Red
+    else if acc.(1) >= acc.(2) && acc.(1) >= acc.(3) then Blue
+    else if acc.(2) >= acc.(3) then Green
+    else Yellow
 end
