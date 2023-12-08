@@ -174,10 +174,12 @@ module Game = struct
   (* checks to see if enemy can play a card, if so, the enemy plays the card,
      else the enemy draws a card and sees if they can play card, else they do
      not any card during their turn. Returns the updated game. *)
-  let enemy_turn (game : t) = game
+  let enemy_turn (game : t) = failwith "Unimplemented"
+      
+    (* game in
   (* NOTE: INCOMPLETE! *)
-  match AI.enemy_turn game.enemy_hand "Easy" game.discard_pile (List.length
-     game.enemy_hand) with | Some x -> game | None -> game
+  match AI.enemy_turn game.enemy_hand game.difficulty game.discard_pile (List.length
+     game.enemy_hand) with | Some x -> game | None -> game *)
   (* let try_again game =
 
      let decide_course game = match AI.enemy_turn (game) with | Some enemy_card
