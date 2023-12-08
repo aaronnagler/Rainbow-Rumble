@@ -17,7 +17,8 @@ module Game = struct
       | "green" -> "\027[32m"
       | "yellow" -> "\027[33m"
       | "blue" -> "\027[34m"
-      | "wild" | "none" -> ""
+      | "wild" -> "\027[95m"
+      | "white" -> ""
       | _ -> "Not a recognized color"
     in
 
@@ -107,7 +108,7 @@ module Game = struct
      user-described color [new_color] *)
   let transform_pile_wild (game : t) (new_color : string) : t =
     let new_prop = Card.get_property_name game.discard_pile in
-    let new_card = Card.make_card new_color "NaN" new_prop in
+    let new_card = Card.make_card new_color "Wild" new_prop in
     { game with discard_pile = new_card }
 
   (* Removes [card] from [hand] Returns: [hand] without [card] *)
