@@ -66,6 +66,18 @@ module type CardType = sig
 
   (* returns a card with specified color, number, and property *)
   val make_card : string -> string -> string -> t
+
+  (*Returns all number cards given a hand*)
+  val filter_number_cards : t list -> t list
+
+  (*Return all cards with special property given a hand*)
+  val filter_special_cards : t list -> t list
+
+  (*Returns all wild cards given a hand*)
+  val filter_wild_cards : t list -> t list
+
+  (*Returns the most prevelant color in hand.*)
+  val most_common_color : t list -> color
 end
 
 module Card : CardType = struct
@@ -181,8 +193,49 @@ module Card : CardType = struct
     let p = make_prop prop in
     { color = c; number = n; property = p }
 
-  (**)
-  let filter_normal_cards (hand : t list) : t list = failwith "Unimplemented"
-  let filter_special_cards (hand : t list) : t list = failwith "Unimplemented"
-  let filter_wild_cards (hand : t list) : t list = failwith "Unimplemented"
+  let filter_number_cards (hand : t list) : t list =
+    List.filter
+      (fun card ->
+        match card.number with
+        | NaN -> false
+        | _ -> true)
+      hand
+
+  let filter_special_cards (hand : t list) : t list =
+    List.filter
+      (fun card ->
+        match card.property with
+        | None -> false
+        | _ -> true)
+      hand
+
+  let filter_wild_cards (hand : t list) : t list =
+    List.filter
+      (fun card ->
+        match card.color with
+        | Wild -> true
+        | _ -> false)
+      hand
+
+      let most_common_color (hand : t list) : color =
+        let rec increment_color acc hand =
+          match hand with
+          | [] -> ()
+          | h :: t ->
+          match h.color with
+          | Red -> acc.(0) <- acc.(0) + 1;
+          | Blue -> acc.(1) <- acc.(1) + 1;
+          | Green -> acc.(2) <- acc.(2) + 1;
+          | Yellow -> acc.(3) <- acc.(3) + 1;
+          | Wild -> ()
+        in
+        let acc = [|0;0;0;0|] in
+        increment_color acc hand;
+        if acc.(0) >= acc.(1) && acc.(0) >= acc.(2) && acc.(0) >= acc.(3) then Red else
+          if acc.(1) >= acc.(2) && acc.(1) >= acc.(3) then Blue else
+            if acc.(2) >= acc.(3) then Green
+            else Yellow
+
+          
+
 end
