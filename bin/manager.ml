@@ -172,7 +172,7 @@ let rec game_process z (game : Game.t) =
         "please enter a number corresponding to the label of the card";
       print_string "> ";
       game_process () (read_card (read_line ()) game)
-  | "draw" -> game_process () (draw_card game true)
+  | "draw" -> game_process () (transition_before_opp (draw_card game true))
   | _ ->
       print_endline "Please enter a valid input";
       game_process () game
