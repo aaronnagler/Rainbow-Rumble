@@ -33,10 +33,29 @@ module Game = struct
     let p = Card.get_property_name card in
     let print_bracket c s = print_colored_text c ("[" ^ s ^ "]") in
     match (c, n, p) with
-    | "Wild", _, "Draw 4" -> print_bracket "wild" "Draw 4"
+    | "Wild", _, "Draw 4" -> print_bracket "Wild" "Draw 4"
     | "Wild", _, "None" -> print_bracket "wild" "Wild"
     | color, _, "Draw 2" -> print_bracket color (color ^ " Draw 2")
     | color, numb, _ -> print_bracket color (color ^ " " ^ numb)
+
+  (* Prints a long form description of the card, including the effects of a wild
+     card if it is appicable *)
+  let print_long (card : Card.t) : unit =
+    let c = Card.get_color card in
+    let n = Card.get_number card in
+    let p = Card.get_property_name card in
+    let ld = Card.get_property_description card in
+    match (c, n, p, ld) with
+    | "Wild", _, "Draw 4", d ->
+        print_string ("Card: " ^ "Wild, " ^ "Draw 4, " ^ "description: " ^ d)
+    | "Wild", _, "None", _ -> print_string ("Card: " ^ "wild, " ^ "Wild")
+    | color, _, "Draw 2", d ->
+        print_string (color ^ (color ^ " Draw 2") ^ "description: " ^ d)
+    | color, numb, _, _ -> print_string ("Card: " ^ color ^ color ^ " " ^ numb)
+
+  (* Prints the effect of a card, if it has one, otherwise prints "none" *)
+  let print_desc (card : Card.t) : unit =
+    print_string (Card.get_property_description card)
 
   (* Prints the player's hand. *)
   let rec print_player_hand (hand : Card.t list) (acc : int) : unit =
@@ -139,8 +158,13 @@ module Game = struct
       match player with
       | true ->
           apply_effect card (remove_card card game.player_hand) game.enemy_hand
-      | false ->
-          apply_effect card (remove_card card game.enemy_hand) game.player_hand
+      | false -> (
+          match
+            apply_effect card
+              (remove_card card game.enemy_hand)
+              game.player_hand
+          with
+          | x, y -> (y, x))
     in
     {
       game with

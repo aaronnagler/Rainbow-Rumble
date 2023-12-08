@@ -12,20 +12,18 @@ let rec repl (eval : string -> string) : unit =
 
 (* Draws a card to the players hand, returns the updated game *)
 let draw_card (game : Game.t) (player : bool) =
+  print_endline "\n---------------------------------------------------------\n";
   print_endline "a card has been added to your hand";
   Game.draw_update game player
 
-(* Based on the input (A-G) prints the corresponding card. *)
+(* Based on the input, prints the corresponding card. *)
 let read_card s (game : Game.t) =
+  print_endline "\n---------------------------------------------------------\n";
   let c = List.nth game.player_hand (int_of_string s) in
   print_endline "\n";
-  Game.print_card c;
-  let s =
-    "\n" ^ "\n" ^ Card.get_property_name c ^ ": "
-    ^ Card.get_property_description c
-    ^ "\n"
-  in
-  print_endline s;
+  Game.print_long c;
+  (* let s = "\n" ^ "\n" ^ Card.get_property_name c ^ ": " ^
+     Card.get_property_description c ^ "\n" in print_endline s; *)
   game
 
 (* Returns the updated game after the function plays the card corresponding to
@@ -54,12 +52,19 @@ let read_card s (game : Game.t) =
 let opps_turn (game : Game.t) : Game.t =
   match Game.enemy_turn game with
   | Some x -> (
-      print_endline "the opponent played a new card onto the hand";
+      print_endline "the opponent played a new card onto the hand!";
+      print_endline "the opponent played the following card: ";
+      Game.print_long x;
       let new_game_state = Game.play_card x game false in
       match Card.get_color new_game_state.discard_pile with
       | "Wild" ->
-          Game.transform_pile_wild new_game_state (Game.most_common_color
-             game.enemy_hand)
+          print_endline
+            "\n\
+            \ the card the opponent played has the following effect on your \
+             hand:";
+          Game.print_desc x;
+          Game.transform_pile_wild new_game_state
+            (Game.most_common_color game.enemy_hand)
       | _ -> new_game_state)
   | None -> draw_card game false
 
@@ -67,9 +72,9 @@ let opps_turn (game : Game.t) : Game.t =
    function outputs the result of their turn, and asks if they are ready for the
    opponent's turn, and if so, triggers the opponents turn. *)
 let transition_before_opp (game : Game.t) : Game.t =
+  print_endline "\n---------------------------------------------------------\n";
   print_endline
-    "Your play was successful! Here is the updated game status:
-\n\n\n\n   ";
+    "Your play was successful! Here is the updated game status:\n\n\n\n\n   ";
   print_endline "\n  \nGame Status\n";
   print_endline "    Below is the Discard Pile and your hand! \n";
   print_endline "        Discard Pile: \n";
@@ -77,17 +82,23 @@ let transition_before_opp (game : Game.t) : Game.t =
   print_endline "\n \n        Hand: \n ";
   Game.print_player_hand game.player_hand 0;
   print_endline "\n";
+  print_endline "the number of cards in the opponents hand:";
+  print_endline "\n";
+  print_endline ("     " ^ string_of_int (List.length game.enemy_hand));
   print_endline "Now it is the turn of the opponent.";
   print_endline "Please type anything below if you are ready to proceed:";
   print_string "> ";
   match read_line () with
   | _ ->
+      print_endline
+        "\n---------------------------------------------------------\n";
       print_endline "opponent's turn!";
       opps_turn game
 
 (* Same thing as above [play_card], but with pattern matching instead of
    if-statements ( +2 lines :D )*)
 let play_card s (game : Game.t) =
+  print_endline "\n---------------------------------------------------------\n";
   match
     Game.is_legal_play
       (List.nth game.player_hand (int_of_string s))
@@ -112,10 +123,22 @@ let play_card s (game : Game.t) =
    request in the process of the game *)
 let stage_2 x =
   match read_line () with
-  | "play card" -> "play"
-  | "read card" -> "read"
-  | "draw card" -> "draw"
-  | _ -> "please enter a valid input"
+  | "play card" ->
+      print_endline
+        "\n---------------------------------------------------------\n";
+      "play"
+  | "read card" ->
+      print_endline
+        "\n---------------------------------------------------------\n";
+      "read"
+  | "draw card" ->
+      print_endline
+        "\n---------------------------------------------------------\n";
+      "draw"
+  | _ ->
+      print_endline
+        "\n---------------------------------------------------------\n";
+      "please enter a valid input"
 
 (* Upon the user's request, performs the given action and returns the updated
    game *)
@@ -127,6 +150,10 @@ let rec game_process z (game : Game.t) =
   Game.print_card game.discard_pile;
   print_endline "\n \n        Hand: \n ";
   Game.print_player_hand game.player_hand 0;
+  print_endline "\n";
+  print_endline "the number of cards in the opponents hand:";
+  print_endline "\n";
+  print_endline ("     " ^ string_of_int (List.length game.enemy_hand));
   print_endline "\n";
   print_endline
     "    You have the following input choices:\n\
@@ -166,6 +193,8 @@ let stage_1 x =
   print_string "> ";
   match read_line () with
   | "rules" ->
+      print_endline
+        "\n---------------------------------------------------------\n";
       "The rules of the game are as followed:\n\
       \      At a very high level, you have a hand of cards and your objective \
        is to\n\
@@ -208,8 +237,14 @@ let stage_1 x =
        card on\n\
       \            the discard pile\n\
       \      "
-  | "start game" -> "I hope you have fun!"
-  | _ -> "please enter a valid input"
+  | "start game" ->
+      print_endline
+        "\n---------------------------------------------------------\n";
+      "I hope you have fun!"
+  | _ ->
+      print_endline
+        "\n---------------------------------------------------------\n";
+      "please enter a valid input"
 
 (* Takes user's input in the starting stage of the game and either begins the
    game or persists this menu *)
@@ -224,7 +259,9 @@ let rec start_menu z =
 (* Requests desired difficulty from player *)
 let set_difficulty () =
   print_endline "Select game difficulty: \n Easy \n Medium \n Hard";
+  print_string "> ";
   let diff = read_line () in
+  print_endline "\n---------------------------------------------------------\n";
   String.lowercase_ascii diff
 
 (*********** command line interface ***********)
