@@ -187,5 +187,9 @@ module Game = struct
 
   (* Checks if either player or opponent meets the win condition: if they have 0
      cards in their hand *)
-  let check_winner (game : t) = failwith "Unimplemented"
+  let check_winner (game : t) : bool * int =
+    match (List.length game.player_hand, List.length game.enemy_hand) with
+    | 0, _ -> (true, 0)
+    | _, 0 -> (true, 1)
+    | _, _ -> (false, 2)
 end

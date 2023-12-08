@@ -77,34 +77,39 @@ let stage_2 x =
    game *)
 let rec game_process z (game : Game.t) =
   (* Check if win condition have been met *)
-  print_endline "\n  \nGame Status\n";
-  print_endline "    Below is the Discard Pile and your hand! \n";
-  print_endline "        Discard Pile: \n";
-  Game.print_card game.discard_pile;
-  print_endline "\n \n        Hand: \n ";
-  Game.print_player_hand game.player_hand 0;
-  print_endline "\n";
-  print_endline
-    "    You have the following input choices:\n\
-    \      - play card  (to play one of your cards)\n\
-    \      - read card  (to read the specific description of one of your cards)";
-  print_endline "      - draw card  (to draw a card)";
-  print_string "> ";
-  match stage_2 () with
-  | "play" ->
+  match Game.check_winner game with
+  | true, 0 -> "You Win!"
+  | true, _ -> "You Lose :("
+  | false, _ -> (
+      print_endline "\n  \nGame Status\n";
+      print_endline "    Below is the Discard Pile and your hand! \n";
+      print_endline "        Discard Pile: \n";
+      Game.print_card game.discard_pile;
+      print_endline "\n \n        Hand: \n ";
+      Game.print_player_hand game.player_hand 0;
+      print_endline "\n";
       print_endline
-        "please enter a number corresponding to the label of the card";
+        "    You have the following input choices:\n\
+        \      - play card  (to play one of your cards)\n\
+        \      - read card  (to read the specific description of one of your \
+         cards)";
+      print_endline "      - draw card  (to draw a card)";
       print_string "> ";
-      game_process () (play_card (read_line ()) game)
-  | "read" ->
-      print_endline
-        "please enter a number corresponding to the label of the card";
-      print_string "> ";
-      game_process () (read_card (read_line ()) game)
-  | "draw" -> game_process () (draw_card game)
-  | x ->
-      print_endline x;
-      game_process () (Game.enemy_turn game)
+      match stage_2 () with
+      | "play" ->
+          print_endline
+            "please enter a number corresponding to the label of the card";
+          print_string "> ";
+          game_process () (play_card (read_line ()) game)
+      | "read" ->
+          print_endline
+            "please enter a number corresponding to the label of the card";
+          print_string "> ";
+          game_process () (read_card (read_line ()) game)
+      | "draw" -> game_process () (draw_card game)
+      | x ->
+          print_endline x;
+          game_process () (Game.enemy_turn game))
 
 (* returns the string "I hope you have fun!" *)
 let start_game x = "Good luck and have fun!"
@@ -178,10 +183,42 @@ let rec start_menu z =
       start_menu ()
 
 (* Requests desired difficulty from player *)
-let set_difficulty () =
-  print_endline "Select game difficulty: \n Easy \n Medium \n Hard";
+let rec set_difficulty () =
+  print_endline
+    "Select number for game difficulty: \n 0. Easy \n 1. Medium \n 2. Hard";
   let diff = read_line () in
-  String.lowercase_ascii diff
+  match String.lowercase_ascii diff with
+  | "0" | "easy" ->
+      print_endline "Easy mode selected!";
+      "easy"
+  | "1" | "medium" ->
+      print_endline "Medium mode selected!";
+      "medium"
+  | "2" | "hard" ->
+      print_endline "Hard mode selected!";
+      "hard"
+  | _ -> set_difficulty ()
+
+let rec play_again () =
+  print_endline "What do you want to do now?";
+  print_endline "0. Play again";
+  print_endline "1. Main Menu";
+  match String.lowercase_ascii (read_line ()) with
+  | "0" | "play again" ->
+      let diff = set_difficulty () in
+      print_endline ("\n" ^ start_game ());
+      print_endline (game_process () (Game.create_hands diff));
+      play_again ()
+  | "1" | "main menu" ->
+      print_endline "Welcome to Rainbow Card Rumble!";
+      print_endline
+        "Please put your ternimal into full screen for the best experience!";
+      print_endline (start_menu ());
+      let diff = set_difficulty () in
+      print_endline ("\n" ^ start_game ());
+      print_endline (game_process () (Game.create_hands diff));
+      play_again ()
+  | _ -> play_again ()
 
 (*********** command line interface ***********)
 let () =
@@ -194,7 +231,8 @@ let () =
   print_endline (start_menu ());
   let diff = set_difficulty () in
   print_endline ("\n" ^ start_game ());
-  print_endline (game_process () (Game.create_hands diff))
+  print_endline (game_process () (Game.create_hands diff));
+  play_again ()
 
 (* Game.print_player_hand; Game.create_hands; let words = read_line () in
    print_endline words; Game.print_player_hand Game.create_hands *)
