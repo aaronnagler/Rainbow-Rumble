@@ -2,8 +2,17 @@ open OUnit2
 open Game
 open Card
 
+(*All Number Cards*)
+
+(*All Special Cards*)
+
+(*All Wild Cards*)
+
+(*Full Deck*)
+
 let card_tests =
   [
+
     ( "get_color regular card" >:: fun _ ->
       assert_equal "Red" (get_color (make_card "Red" "2" "None")) );
     ( "get_color draw 2" >:: fun _ ->
@@ -38,8 +47,11 @@ let card_tests =
         (get_property_description (make_card "Wild" "NaN" "Draw 4")) );
   ]
 
-let legal_play_tests =
+let game_tests =
   [
+
+
+  (*is_legal_play tests*)
     ( "is_legal_play matching colors" >:: fun _ ->
       assert_equal true
         (Game.is_legal_play
@@ -117,8 +129,9 @@ let legal_play_tests =
            (make_card "Yellow" "Wild" "None")) );
   ]
 
-let ai_tests =
+let opp_tests =
   [
+    (*strategy 1*)
     ( "strategy_1 : enemy has only number cards" >:: fun _ ->
       assert_equal true true );
     ( "strategy_1 : enemy has only special cards" >:: fun _ ->
@@ -133,10 +146,40 @@ let ai_tests =
       assert_equal true true );
     ( "strategy_1 : enemy has number, special and wild cards" >:: fun _ ->
       assert_equal true true );
+    (*strategy 2*)
+    ( "strategy_2 : enemy has only number cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_2 : enemy has only special cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_2 : enemy has only wild cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_2 : enemy has number cards and special cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_2 : enemy has number cards and wild cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_2 : enemy has special cards and wild cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_2 : enemy has number, special and wild cards" >:: fun _ ->
+      assert_equal true true );
+    (*strategy 3*)
+    ( "strategy_3 : enemy has only number cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_3 : enemy has only special cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_3 : enemy has only wild cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_3 : enemy has number cards and special cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_3 : enemy has number cards and wild cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_3 : enemy has special cards and wild cards" >:: fun _ ->
+      assert_equal true true );
+    ( "strategy_3 : enemy has number, special and wild cards" >:: fun _ ->
+      assert_equal true true );
   ]
 
 let suite =
   "test suite for cards"
-  >::: List.flatten [ card_tests; legal_play_tests; ai_tests ]
+  >::: List.flatten [ card_tests; game_tests; opp_tests ]
 
 let () = run_test_tt_main suite

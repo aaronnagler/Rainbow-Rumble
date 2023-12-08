@@ -17,7 +17,6 @@ type numb =
   | Eight
   | Nine
   | NaN
-  | WildNum
 
 (* tuple (name, description) where name is the name of the property and
    description details the effect of the property *)
@@ -95,7 +94,6 @@ module Card : CardType = struct
     | Eight -> "8"
     | Nine -> "9"
     | NaN -> "NaN"
-    | WildNum -> "Wild"
 
   let get_property_name t =
     let p = t.property in
@@ -163,7 +161,6 @@ module Card : CardType = struct
     | "8" -> Eight
     | "9" -> Nine
     | "NaN" -> NaN
-    | "Wild" -> WildNum
     | _ -> failwith "Not a valid numb"
 
   let make_prop (prop : string) =
