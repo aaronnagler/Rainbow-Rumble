@@ -21,20 +21,23 @@ module Game = struct
       | "white" -> ""
       | _ -> "Not a recognized color"
     in
-
     let reset = "\027[0m" in
     print_string (c ^ s ^ reset)
 
   (* Prints the color, number, and property of [card] where applicable. Example
-     outputs: "[Red 1]", "[Yellow Draw 2]", "[Draw 4]", "[Wild]"*)
+     outputs: "[Red 1]", "[Yellow Draw 2]", "[Blue Draw 4]", "[Wild]"*)
   let print_card (card : Card.t) : unit =
     let c = Card.get_color card in
     let n = Card.get_number card in
     let p = Card.get_property_name card in
     let print_bracket c s = print_colored_text c ("[" ^ s ^ "]") in
     match (c, n, p) with
-    | "Wild", _, "Draw 4" -> print_bracket "wild" "Draw 4"
-    | "Wild", _, "None" -> print_bracket "wild" "Wild"
+    | "Wild", "NaN", "Draw 4" -> print_bracket "wild" "Draw 4"
+    | "Wild", "NaN", "None" -> print_bracket "wild" "Wild"
+    | color, "NaN", "Draw 4" ->
+        print_bracket color (String.capitalize_ascii color ^ " Draw 4")
+    | color, "NaN", "None" ->
+        print_bracket color (String.capitalize_ascii color ^ " Wild")
     | color, _, "Draw 2" -> print_bracket color (color ^ " Draw 2")
     | color, numb, _ -> print_bracket color (color ^ " " ^ numb)
 
@@ -108,7 +111,7 @@ module Game = struct
      user-described color [new_color] *)
   let transform_pile_wild (game : t) (new_color : string) : t =
     let new_prop = Card.get_property_name game.discard_pile in
-    let new_card = Card.make_card new_color "Wild" new_prop in
+    let new_card = Card.make_card new_color "NaN" new_prop in
     { game with discard_pile = new_card }
 
   (* Removes [card] from [hand] Returns: [hand] without [card] *)
