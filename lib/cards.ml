@@ -17,6 +17,7 @@ type numb =
   | Eight
   | Nine
   | NaN
+  | WildNum
 
 (* tuple (name, description) where name is the name of the property and
    description details the effect of the property *)
@@ -57,8 +58,26 @@ module type CardType = sig
   (* Returns a randomly generated card *)
   val get_rand_card : Random.State.t -> t
 
+  (* Given a string [numb], returns the associated number. *)
+  val make_numb : string -> numb
+
+  (* Given a string prop, returns the associated number. *)
+  val make_prop : string -> prop option
+
   (* returns a card with specified color, number, and property *)
   val make_card : string -> string -> string -> t
+
+  (*Returns all number cards given a hand*)
+  val filter_number_cards : t list -> t list
+
+  (*Return all cards with special property given a hand*)
+  val filter_special_cards : t list -> t list
+
+  (*Returns all wild cards given a hand*)
+  val filter_wild_cards : t list -> t list
+
+  (*Returns the most prevelant color in hand.*)
+  val most_common_color : t list -> color
 end
 
 module Card : CardType = struct
@@ -85,6 +104,7 @@ module Card : CardType = struct
     | Eight -> "8"
     | Nine -> "9"
     | NaN -> "NaN"
+    | WildNum -> "Wild"
 
   let get_property_name t =
     let p = t.property in
@@ -115,9 +135,9 @@ module Card : CardType = struct
     let numb_list =
       [ NaN; Zero; One; Two; Three; Four; Five; Six; Seven; Eight; Nine ]
     in
-    match Random.State.int local_rng_state 5 with
+    match Random.State.int local_rng_state 6 with
     | 0 -> { color = Wild; number = NaN; property = None }
-    | 1 -> { color = Wild; number = NaN; property = Some Draw4 }
+    | 5 -> { color = Wild; number = NaN; property = Some Draw4 }
     | x -> (
         match Random.State.int local_rng_state 11 with
         | 0 ->
@@ -135,12 +155,12 @@ module Card : CardType = struct
 
   (* Given a string [color], returns the associated color. *)
   let make_color (color : string) =
-    match color with
-    | "Red" -> Red
-    | "Blue" -> Blue
-    | "Green" -> Green
-    | "Yellow" -> Yellow
-    | "Wild" -> Wild
+    match String.lowercase_ascii color with
+    | "red" -> Red
+    | "blue" -> Blue
+    | "green" -> Green
+    | "yellow" -> Yellow
+    | "wild" -> Wild
     | _ -> failwith "Not a valid color"
 
   (* Given a string [numb], returns the associated number. *)
@@ -157,9 +177,9 @@ module Card : CardType = struct
     | "8" -> Eight
     | "9" -> Nine
     | "NaN" -> NaN
+    | "Wild" -> WildNum
     | _ -> failwith "Not a valid numb"
 
-  (* Given a string prop, returns the associated number. *)
   let make_prop (prop : string) =
     match prop with
     | "None" -> None
@@ -172,11 +192,50 @@ module Card : CardType = struct
     let n = make_numb numb in
     let p = make_prop prop in
     { color = c; number = n; property = p }
-    
-    (**)
-    let filter_normal_cards (hand : t list) : t list = failwith "Unimplemented"
 
-    let filter_special_cards (hand : t list) : t list = failwith "Unimplemented"
+  let filter_number_cards (hand : t list) : t list =
+    List.filter
+      (fun card ->
+        match card.number with
+        | NaN -> false
+        | _ -> true)
+      hand
 
-    let filter_wild_cards (hand : t list) : t list = failwith "Unimplemented"
+  let filter_special_cards (hand : t list) : t list =
+    List.filter
+      (fun card ->
+        match card.property with
+        | None -> false
+        | _ -> true)
+      hand
+
+  let filter_wild_cards (hand : t list) : t list =
+    List.filter
+      (fun card ->
+        match card.color with
+        | Wild -> true
+        | _ -> false)
+      hand
+
+      let most_common_color (hand : t list) : color =
+        let rec increment_color acc hand =
+          match hand with
+          | [] -> ()
+          | h :: t ->
+          match h.color with
+          | Red -> acc.(0) <- acc.(0) + 1;
+          | Blue -> acc.(1) <- acc.(1) + 1;
+          | Green -> acc.(2) <- acc.(2) + 1;
+          | Yellow -> acc.(3) <- acc.(3) + 1;
+          | Wild -> ()
+        in
+        let acc = [|0;0;0;0|] in
+        increment_color acc hand;
+        if acc.(0) >= acc.(1) && acc.(0) >= acc.(2) && acc.(0) >= acc.(3) then Red else
+          if acc.(1) >= acc.(2) && acc.(1) >= acc.(3) then Blue else
+            if acc.(2) >= acc.(3) then Green
+            else Yellow
+
+          
+
 end

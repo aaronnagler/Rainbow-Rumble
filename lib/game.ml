@@ -7,15 +7,36 @@ module Game = struct
     player_hand : Card.t list;
     enemy_hand : Card.t list;
     difficulty : string;
-    mutable discard_pile : Card.t;
+    discard_pile : Card.t;
   }
 
-  (* Prints the color and number of [card]. Example output: "[Yellow 5]"*)
+  let rec print_colored_text color s : unit =
+    let c =
+      match String.lowercase_ascii color with
+      | "red" -> "\027[31m"
+      | "green" -> "\027[32m"
+      | "yellow" -> "\027[33m"
+      | "blue" -> "\027[34m"
+      | "wild" -> "\027[95m"
+      | "white" -> ""
+      | _ -> "Not a recognized color"
+    in
+
+    let reset = "\027[0m" in
+    print_string (c ^ s ^ reset)
+
+  (* Prints the color, number, and property of [card] where applicable. Example
+     outputs: "[Red 1]", "[Yellow Draw 2]", "[Draw 4]", "[Wild]"*)
   let print_card (card : Card.t) : unit =
-    let num = Card.get_number card in
-    let col = Card.get_color card in
-    let prop = Card.get_property_name card in
-    print_string ("[" ^ col ^ " " ^ num ^ " " ^ prop ^ "]")
+    let c = Card.get_color card in
+    let n = Card.get_number card in
+    let p = Card.get_property_name card in
+    let print_bracket c s = print_colored_text c ("[" ^ s ^ "]") in
+    match (c, n, p) with
+    | "Wild", _, "Draw 4" -> print_bracket "wild" "Draw 4"
+    | "Wild", _, "None" -> print_bracket "wild" "Wild"
+    | color, _, "Draw 2" -> print_bracket color (color ^ " Draw 2")
+    | color, numb, _ -> print_bracket color (color ^ " " ^ numb)
 
   (* Prints the player's hand. *)
   let rec print_player_hand (hand : Card.t list) (acc : int) : unit =
@@ -70,9 +91,25 @@ module Game = struct
 
   (* Returns true if a card can legally be played on the discard_pile. *)
   let is_legal_play (card : Card.t) (discard_pile : Card.t) : bool =
-    if Card.get_color card = Card.get_color discard_pile then true
-    else if Card.get_number card = Card.get_number discard_pile then true
-    else Card.get_color card = "Wild"
+    let same_color, same_number, same_property =
+      ( Card.get_color card = Card.get_color discard_pile,
+        Card.get_number card = Card.get_number discard_pile,
+        Card.get_property_name card = Card.get_property_name discard_pile )
+    in
+    match (same_color, same_number, same_property) with
+    | true, _, _ | _, true, _ -> true
+    | false, false, true ->
+        Card.get_color card = "None"
+        (* If the two cards have the same property, and it's not "None" they can
+           be played on each other*)
+    | false, false, false -> Card.get_color card = "Wild"
+
+  (* If discard pile card is a card of color Wild, transforms card color to
+     user-described color [new_color] *)
+  let transform_pile_wild (game : t) (new_color : string) : t =
+    let new_prop = Card.get_property_name game.discard_pile in
+    let new_card = Card.make_card new_color "Wild" new_prop in
+    { game with discard_pile = new_card }
 
   (* Removes [card] from [hand] Returns: [hand] without [card] *)
   let rec remove_card (card : Card.t) = function
@@ -95,7 +132,7 @@ module Game = struct
      force any side effects of the card onto the other player, if applicable.
      Returns a game with the updated hands and discard_piles for the players. *)
   let play_card (card : Card.t) (game : t) (player : bool) : t =
-    (* create new game state with: 1. Person playi ng card loses card [card] 2.
+    (* create new game state with: 1. Person playing card loses card [card] 2.
        Set [game.discard_pile] to [card] 3. Apply effect to opposing player
        (represented by [player]) *)
     let new_player_hand, new_enemy_hand =

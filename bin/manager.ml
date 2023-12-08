@@ -12,24 +12,52 @@ let rec repl (eval : string -> string) : unit =
 
 (* Based on the input (A-G) prints the corresponding card. *)
 let read_card s (game : Game.t) =
-  Game.print_card (List.nth game.player_hand (int_of_string s));
+  let c = List.nth game.player_hand (int_of_string s) in
+  print_endline "\n";
+  Game.print_card c;
+  let s =
+    "\n" ^ "\n" ^ Card.get_property_name c ^ ": "
+    ^ Card.get_property_description c
+    ^ "\n"
+  in
+  print_endline s;
   game
 
 (* Returns the updated game after the function plays the card corresponding to
    user input (A-F) if the card is valid, if not, does not play the card, and
    prints corresponding statement *)
+
+(* let play_card s (game : Game.t) = if Game.is_legal_play (List.nth
+   game.player_hand (int_of_string s)) game.discard_pile then ( print_endline
+   "Card was played successfully!"; let new_game_state = Game.play_card
+   (List.nth game.player_hand (int_of_string s)) game true in if Card.get_color
+   new_game_state.discard_pile = "Wild" then let input = read_line () in
+   Game.transform_pile_wild new_game_state input else new_game_state) else (
+   print_endline "Card could not be played, please try another card or draw a
+   card."; game) *)
+
+(* Same thing as above [play_card], but with pattern matching instead of
+   if-statements ( +2 lines :D )*)
 let play_card s (game : Game.t) =
-  if
+  match
     Game.is_legal_play
       (List.nth game.player_hand (int_of_string s))
       game.discard_pile
-  then (
-    print_endline "Card was played successfully!";
-    Game.play_card (List.nth game.player_hand (int_of_string s)) game true)
-  else (
-    print_endline
-      "Card could not be played, please try another card or draw a card.";
-    game)
+  with
+  | true -> (
+      let new_game_state =
+        Game.play_card (List.nth game.player_hand (int_of_string s)) game true
+      in
+      match Card.get_color new_game_state.discard_pile with
+      | "Wild" ->
+          print_endline "Choose new color for wild card: ";
+          let input = read_line () in
+          Game.transform_pile_wild new_game_state input
+      | _ -> new_game_state)
+  | false ->
+      print_endline
+        "Card could not be played, please try another card or draw a card.";
+      game
 
 (* Draws a card to the players hand, returns the updated game *)
 let draw_card (game : Game.t) =
@@ -149,6 +177,9 @@ let rec start_menu z =
 
 (*********** command line interface ***********)
 let () =
+  (* testing code for color outputs - Derek *)
+  (* Game.print_colored_text "red" "Merry "; Game.print_colored_text "green"
+     "Christmas\n"; Game.print_colored_text "red" "losers"; *)
   print_endline "Welcome to Rainbow Card Rumble!";
   print_endline
     "Please put your ternimal into full screen for the best experience!";
