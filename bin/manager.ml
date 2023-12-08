@@ -76,6 +76,7 @@ let stage_2 x =
 (* Upon the user's request, performs the given action and returns the updated
    game *)
 let rec game_process z (game : Game.t) =
+  (* Check if win condition have been met *)
   print_endline "\n  \nGame Status\n";
   print_endline "    Below is the Discard Pile and your hand! \n";
   print_endline "        Discard Pile: \n";
@@ -106,7 +107,8 @@ let rec game_process z (game : Game.t) =
       game_process () (Game.enemy_turn game)
 
 (* returns the string "I hope you have fun!" *)
-let start_game x = "I hope you have fun!"
+let start_game x = "Good luck and have fun!"
+(* let start_game x = "\n" *)
 
 (* Prints some instructions about starting the game and takes users' input *)
 let stage_1 x =
@@ -169,11 +171,17 @@ let stage_1 x =
    game or persists this menu *)
 let rec start_menu z =
   match stage_1 () with
-  | "I hope you have fun!" -> start_game ()
+  | "I hope you have fun!" -> "\n"
   | "Quitting the game..." -> failwith "Game has quit!"
   | x ->
       print_endline x;
       start_menu ()
+
+(* Requests desired difficulty from player *)
+let set_difficulty () =
+  print_endline "Select game difficulty: \n Easy \n Medium \n Hard";
+  let diff = read_line () in
+  String.lowercase_ascii diff
 
 (*********** command line interface ***********)
 let () =
@@ -181,7 +189,9 @@ let () =
   print_endline
     "Please put your ternimal into full screen for the best experience!";
   print_endline (start_menu ());
-  print_endline (game_process () Game.create_hands)
+  let diff = set_difficulty () in
+  print_endline ("\n" ^ start_game ());
+  print_endline (game_process () (Game.create_hands diff))
 
 (* Game.print_player_hand; Game.create_hands; let words = read_line () in
    print_endline words; Game.print_player_hand Game.create_hands *)
