@@ -99,7 +99,7 @@ module Game = struct
     match (same_color, same_number, same_property) with
     | true, _, _ | _, true, _ -> true
     | false, false, true ->
-        Card.get_color card = "None"
+        Card.get_color card = "Wild"
         (* If the two cards have the same property, and it's not "None" they can
            be played on each other*)
     | false, false, false -> Card.get_color card = "Wild"

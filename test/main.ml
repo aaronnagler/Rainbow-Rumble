@@ -100,6 +100,21 @@ let legal_play_tests =
         (Game.is_legal_play
            (make_card "Wild" "NaN" "Draw 4")
            (make_card "Wild" "NaN" "Draw 4")) );
+    ( "is_legal_play playing wild on draw 4" >:: fun _ ->
+      assert_equal true
+        (Game.is_legal_play
+           (make_card "Wild" "NaN" "None")
+           (make_card "Wild" "NaN" "Draw 4")) );
+    ( "is_legal_play playing wild on regular card" >:: fun _ ->
+      assert_equal true
+        (Game.is_legal_play
+           (make_card "Wild" "NaN" "None")
+           (make_card "Red" "4" "None")) );
+    ( "is_legal_play playing wild on wild" >:: fun _ ->
+      assert_equal true
+        (Game.is_legal_play
+           (make_card "Wild" "NaN" "None")
+           (make_card "Yellow" "Wild" "None")) );
   ]
 
 let suite =
