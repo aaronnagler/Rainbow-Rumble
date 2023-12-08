@@ -130,7 +130,7 @@ module Game = struct
      whether the card is being played by the player [true] or by the opponent
      [false], this function will play the card onto the discard_pile, and will
      force any side effects of the card onto the other player, if applicable.
-     Returns a game with the updated hands and discard_piles for the players. *)
+     Returns a game with the updated hands and discard_piles for the players.*)
   let play_card (card : Card.t) (game : t) (player : bool) : t =
     (* create new game state with: 1. Person playing card loses card [card] 2.
        Set [game.discard_pile] to [card] 3. Apply effect to opposing player
