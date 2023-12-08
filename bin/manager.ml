@@ -147,8 +147,8 @@ let stage_2 x =
 let rec game_process z (game : Game.t) =
   (* Check if win condition have been met *)
   match Game.check_winner game with
-  | true, 0 -> "You Win!"
-  | true, _ -> "You Lose :("
+  | true, 0 -> "\n You Win!"
+  | true, _ -> "\n You Lose :("
   | false, _ -> (
       print_endline "\n  \nGame Status\n";
       print_endline "    Below is the Discard Pile and your hand! \n";
@@ -179,7 +179,7 @@ let rec game_process z (game : Game.t) =
             "please enter a number corresponding to the label of the card";
           print_string "> ";
           game_process () (read_card (read_line ()) game)
-      | "draw" -> game_process () (draw_card game true)
+      | "draw" -> game_process () (transition_before_opp (draw_card game true))
       | _ ->
           print_endline "Please enter a valid input";
           game_process () game)
