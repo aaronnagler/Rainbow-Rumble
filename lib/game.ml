@@ -10,18 +10,32 @@ module Game = struct
     discard_pile : Card.t;
   }
 
+  let rec print_colored_text color s : unit =
+    let c =
+      match String.lowercase_ascii color with
+      | "red" -> "\027[31m"
+      | "green" -> "\027[32m"
+      | "yellow" -> "\027[33m"
+      | "blue" -> "\027[34m"
+      | "wild" | "none" -> ""
+      | _ -> "Not a recognized color"
+    in
+
+    let reset = "\027[0m" in
+    print_string (c ^ s ^ reset)
+
   (* Prints the color, number, and property of [card] where applicable. Example
      outputs: "[Red 1]", "[Yellow Draw 2]", "[Draw 4]", "[Wild]"*)
   let print_card (card : Card.t) : unit =
     let c = Card.get_color card in
     let n = Card.get_number card in
     let p = Card.get_property_name card in
-    let print_bracket s = print_string ("[" ^ s ^ "]") in
+    let print_bracket c s = print_colored_text c ("[" ^ s ^ "]") in
     match (c, n, p) with
-    | "Wild", _, "Draw 4" -> print_bracket "Draw 4"
-    | "Wild", _, "None" -> print_bracket "Wild"
-    | color, _, "Draw 2" -> print_bracket (color ^ " Draw 2")
-    | color, numb, _ -> print_bracket (color ^ " " ^ numb)
+    | "Wild", _, "Draw 4" -> print_bracket "wild" "Draw 4"
+    | "Wild", _, "None" -> print_bracket "wild" "Wild"
+    | color, _, "Draw 2" -> print_bracket color (color ^ " Draw 2")
+    | color, numb, _ -> print_bracket color (color ^ " " ^ numb)
 
   (* Prints the player's hand. *)
   let rec print_player_hand (hand : Card.t list) (acc : int) : unit =

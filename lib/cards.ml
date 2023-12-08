@@ -121,9 +121,9 @@ module Card : CardType = struct
     let numb_list =
       [ NaN; Zero; One; Two; Three; Four; Five; Six; Seven; Eight; Nine ]
     in
-    match Random.State.int local_rng_state 5 with
+    match Random.State.int local_rng_state 6 with
     | 0 -> { color = Wild; number = NaN; property = None }
-    | 1 -> { color = Wild; number = NaN; property = Some Draw4 }
+    | 5 -> { color = Wild; number = NaN; property = Some Draw4 }
     | x -> (
         match Random.State.int local_rng_state 11 with
         | 0 ->
