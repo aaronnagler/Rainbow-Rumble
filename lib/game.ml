@@ -171,21 +171,41 @@ module Game = struct
           difficulty = "";
         }
 
-  (* checks to see if enemy can play a card, if so, the enemy plays the card,
-     else the enemy draws a card and sees if they can play card, else they do
-     not any card during their turn. Returns the updated game. *)
-  let enemy_turn (game : t) = failwith "Unimplemented"
+  let rec enemy_turn_helper (enemy_hand : Card.t list) (difficulty : string)
+      (discard_pile : Card.t) (player_hand_num : int) : Card.t option =
+    match AI.enemy_turn enemy_hand difficulty discard_pile player_hand_num with
+    | Some x -> (
+        match is_legal_play x discard_pile with
+        | true -> Some x
+        | false ->
+            enemy_turn_helper (remove_card x enemy_hand) difficulty discard_pile
+              player_hand_num)
+    | None -> None
 
-  (* game in (* NOTE: INCOMPLETE! *) match AI.enemy_turn game.enemy_hand
-     game.difficulty game.discard_pile (List.length game.enemy_hand) with | Some
-     x -> game | None -> game *)
-  (* let try_again game =
+  (* Call AI.enemy_turn until Some playable card is returned. If there are no
+     playable cards in hand, then return None*)
+  let enemy_turn (game : t) : Card.t option =
+    enemy_turn_helper game.enemy_hand game.difficulty game.discard_pile
+      (List.length game.player_hand)
 
-     let decide_course game = match AI.enemy_turn (game) with | Some enemy_card
-     -> (play_card enemy_card game false) | None -> try_again in game.enemy_hand
-     = enemy_updated_hand; game *)
-
-  (* Checks if either player or opponent meets the win condition: if they have 0
-     cards in their hand *)
-  let check_winner (game : t) = failwith "Unimplemented"
+  (*Returns the most prevelant color in hand in string form.*)
+  let most_common_color (hand : Card.t list) : string =
+    let rec increment_color acc (hand : Card.t list) =
+      match hand with
+      | [] -> ()
+      | h :: t -> (
+          match Card.get_color h with
+          | "Red" -> acc.(0) <- acc.(0) + 1
+          | "Blue" -> acc.(1) <- acc.(1) + 1
+          | "Green" -> acc.(2) <- acc.(2) + 1
+          | "Yellow" -> acc.(3) <- acc.(3) + 1
+          | "Wild" -> ()
+          | _ -> failwith "an error occurred")
+    in
+    let acc = [| 0; 0; 0; 0 |] in
+    increment_color acc hand;
+    if acc.(0) >= acc.(1) && acc.(0) >= acc.(2) && acc.(0) >= acc.(3) then "Red"
+    else if acc.(1) >= acc.(2) && acc.(1) >= acc.(3) then "Blue"
+    else if acc.(2) >= acc.(3) then "Green"
+    else "Yellow"
 end

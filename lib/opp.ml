@@ -12,7 +12,7 @@ module AI = struct
     | _ -> Some (List.nth enemy_hand (Random.int (List.length enemy_hand)))
 
   (*Not sure what find_all is, bruh*)
-  let find_all_ = failwith "Unimplemented"
+  (* let find_all_ = failwith "Unimplemented" *)
 
   (*If both enemy and players have 4 or more cards, try to play a normal card
     firsts, followed by non-wild special cards, then wilds*)
