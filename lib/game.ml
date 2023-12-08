@@ -65,7 +65,7 @@ module Game = struct
       player_hand = h1;
       enemy_hand = h2;
       discard_pile = draw_valid_card is_valid_first_card;
-      difficulty = "";
+      difficulty = "Easy";
     }
 
   (* Returns true if a card can legally be played on the discard_pile. *)
@@ -137,7 +137,10 @@ module Game = struct
   (* checks to see if enemy can play a card, if so, the enemy plays the card,
      else the enemy draws a card and sees if they can play card, else they do
      not any card during their turn. Returns the updated game. *)
-  let enemy_turn (game : t) : t = game
+  let enemy_turn (game : t) = game
+  (* NOTE: INCOMPLETE! *)
+  match AI.enemy_turn game.enemy_hand "Easy" game.discard_pile (List.length
+     game.enemy_hand) with | Some x -> game | None -> game
   (* let try_again game =
 
      let decide_course game = match AI.enemy_turn (game) with | Some enemy_card
