@@ -11,6 +11,7 @@ module AI = struct
     | [] -> None
     | _ -> Some (List.nth enemy_hand (Random.int (List.length enemy_hand)))
 
+  (*Not sure what find_all is, bruh*)
   let find_all_ = failwith "Unimplemented"
 
   (*If both enemy and players have 4 or more cards, try to play a normal card
@@ -77,8 +78,8 @@ module AI = struct
      None, meaning the enemy has no cards to play from its hand *)
   let enemy_turn (enemy_hand : Card.t list) (difficulty : string)
       (discard_pile : Card.t) (player_hand_num : int) : Card.t option =
-    if difficulty = "Easy" then easy_mode_turn enemy_hand discard_pile
-    else if difficulty = "Hard" then
+    if difficulty = "easy" then easy_mode_turn enemy_hand discard_pile
+    else if difficulty = "hard" then
       hard_mode_turn enemy_hand discard_pile player_hand_num
     else
       match Random.int 2 with

@@ -130,7 +130,7 @@ module Game = struct
      whether the card is being played by the player [true] or by the opponent
      [false], this function will play the card onto the discard_pile, and will
      force any side effects of the card onto the other player, if applicable.
-     Returns a game with the updated hands and discard_piles for the players. *)
+     Returns a game with the updated hands and discard_piles for the players.*)
   let play_card (card : Card.t) (game : t) (player : bool) : t =
     (* create new game state with: 1. Person playing card loses card [card] 2.
        Set [game.discard_pile] to [card] 3. Apply effect to opposing player
@@ -174,7 +174,11 @@ module Game = struct
   (* checks to see if enemy can play a card, if so, the enemy plays the card,
      else the enemy draws a card and sees if they can play card, else they do
      not any card during their turn. Returns the updated game. *)
-  let enemy_turn (game : t) : t = game
+  let enemy_turn (game : t) = failwith "Unimplemented"
+
+  (* game in (* NOTE: INCOMPLETE! *) match AI.enemy_turn game.enemy_hand
+     game.difficulty game.discard_pile (List.length game.enemy_hand) with | Some
+     x -> game | None -> game *)
   (* let try_again game =
 
      let decide_course game = match AI.enemy_turn (game) with | Some enemy_card
