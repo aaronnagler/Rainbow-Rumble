@@ -1,6 +1,10 @@
 open Cards
 (* open Game *)
 
+module sig
+  
+end
+
 module AI = struct
   (*Given a hand, a random card will be selected to be placed on the pile. If
     there's no card left to select from, then return None, meaning none of the

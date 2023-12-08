@@ -17,7 +17,6 @@ type numb =
   | Eight
   | Nine
   | NaN
-  | WildNum
 
 (* tuple (name, description) where name is the name of the property and
    description details the effect of the property *)
@@ -69,6 +68,9 @@ module type CardType = sig
 
   (*Returns all wild cards given a hand*)
   val filter_wild_cards : t list -> t list
+
+  (*Returns the most prevelant color in hand.*)
+  val most_common_color : t list -> color
 end
 
 module Card : CardType = struct
@@ -95,7 +97,6 @@ module Card : CardType = struct
     | Eight -> "8"
     | Nine -> "9"
     | NaN -> "NaN"
-    | WildNum -> "Wild"
 
   let get_property_name t =
     let p = t.property in
@@ -163,7 +164,6 @@ module Card : CardType = struct
     | "8" -> Eight
     | "9" -> Nine
     | "NaN" -> NaN
-    | "Wild" -> WildNum
     | _ -> failwith "Not a valid numb"
 
   let make_prop (prop : string) =
@@ -202,4 +202,23 @@ module Card : CardType = struct
         | Wild -> true
         | _ -> false)
       hand
+
+  let most_common_color (hand : t list) : color =
+    let rec increment_color acc hand =
+      match hand with
+      | [] -> ()
+      | h :: t -> (
+          match h.color with
+          | Red -> acc.(0) <- acc.(0) + 1
+          | Blue -> acc.(1) <- acc.(1) + 1
+          | Green -> acc.(2) <- acc.(2) + 1
+          | Yellow -> acc.(3) <- acc.(3) + 1
+          | Wild -> ())
+    in
+    let acc = [| 0; 0; 0; 0 |] in
+    increment_color acc hand;
+    if acc.(0) >= acc.(1) && acc.(0) >= acc.(2) && acc.(0) >= acc.(3) then Red
+    else if acc.(1) >= acc.(2) && acc.(1) >= acc.(3) then Blue
+    else if acc.(2) >= acc.(3) then Green
+    else Yellow
 end
