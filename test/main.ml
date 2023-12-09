@@ -382,7 +382,7 @@ let opp_tests =
     (*strategy 1*)
     ( "strategy_1 : enemy has only number cards" >:: fun _ ->
       assert_equal
-        (Some (Card.make_card "Red" "Zero" "NaN"))
+        (Some (Card.make_card "Red" "Zero" "None"))
         (AI.strategy_1 num_cards) );
     ( "strategy_1 : enemy has only special cards" >:: fun _ ->
       assert_equal
@@ -390,15 +390,15 @@ let opp_tests =
         (AI.strategy_1 special_cards) );
     ( "strategy_1 : enemy has only wild cards" >:: fun _ ->
       assert_equal
-        (Some (Card.make_card "Wild" "NaN" "NaN"))
+        (Some (Card.make_card "Wild" "NaN" "Draw 4"))
         (AI.strategy_1 wild_cards) );
     ( "strategy_1 : enemy has number cards and special cards" >:: fun _ ->
       assert_equal
-        (Some (Card.make_card "Red" "Zero" "NaN"))
+        (Some (Card.make_card "Red" "Zero" "None"))
         (AI.strategy_1 (num_cards @ special_cards)) );
     ( "strategy_1 : enemy has number cards and wild cards" >:: fun _ ->
       assert_equal
-        (Some (Card.make_card "Red" "Zero" "NaN"))
+        (Some (Card.make_card "Red" "Zero" "None"))
         (AI.strategy_1 (num_cards @ wild_cards)) );
     ( "strategy_1 : enemy has special cards and wild cards" >:: fun _ ->
       assert_equal
@@ -406,12 +406,12 @@ let opp_tests =
         (AI.strategy_1 (special_cards @ special_cards)) );
     ( "strategy_1 : enemy has number, special and wild cards" >:: fun _ ->
       assert_equal
-        (Some (Card.make_card "Red" "Zero" "NaN"))
+        (Some (Card.make_card "Red" "Zero" "None"))
         (AI.strategy_1 all_cards) );
     (*strategy 2*)
     ( "strategy_2 : enemy has only number cards" >:: fun _ ->
       assert_equal
-        (Some (Card.make_card "Red" "Zero" "NaN"))
+        (Some (Card.make_card "Red" "Zero" "None"))
         (AI.strategy_2 num_cards) );
     ( "strategy_2 : enemy has only special cards" >:: fun _ ->
       assert_equal
@@ -419,7 +419,7 @@ let opp_tests =
         (AI.strategy_2 special_cards) );
     ( "strategy_2 : enemy has only wild cards" >:: fun _ ->
       assert_equal
-        (Some (Card.make_card "Wild" "NaN" "NaN"))
+        (Some (Card.make_card "Wild" "NaN" "Draw 4"))
         (AI.strategy_2 wild_cards) );
     ( "strategy_2 : enemy has number cards and special cards" >:: fun _ ->
       assert_equal
@@ -427,7 +427,7 @@ let opp_tests =
         (AI.strategy_2 (num_cards @ special_cards)) );
     ( "strategy_2 : enemy has number cards and wild cards" >:: fun _ ->
       assert_equal
-        (Some (Card.make_card "Red" "Zero" "NaN"))
+        (Some (Card.make_card "Wild" "NaN" "Draw 4"))
         (AI.strategy_2 (num_cards @ wild_cards)) );
     ( "strategy_2 : enemy has special cards and wild cards" >:: fun _ ->
       assert_equal
@@ -440,7 +440,7 @@ let opp_tests =
     (*strategy 3*)
     ( "strategy_3 : enemy has only number cards" >:: fun _ ->
       assert_equal
-        (Some (Card.make_card "Red" "Zero" "NaN"))
+        (Some (Card.make_card "Red" "Zero" "None"))
         (AI.strategy_3 num_cards) );
     ( "strategy_3 : enemy has only special cards" >:: fun _ ->
       assert_equal
@@ -448,7 +448,7 @@ let opp_tests =
         (AI.strategy_3 special_cards) );
     ( "strategy_3 : enemy has only wild cards" >:: fun _ ->
       assert_equal
-        (Some (Card.make_card "Wild" "NaN" "NaN"))
+        (Some (Card.make_card "Wild" "NaN" "Draw 4"))
         (AI.strategy_3 wild_cards) );
     ( "strategy_3 : enemy has number cards and special cards" >:: fun _ ->
       assert_equal
@@ -456,31 +456,31 @@ let opp_tests =
         (AI.strategy_3 (num_cards @ special_cards)) );
     ( "strategy_3 : enemy has number cards and wild cards" >:: fun _ ->
       assert_equal
-        (Some (Card.make_card "Wild" "NaN" "NaN"))
+        (Some (Card.make_card "Wild" "NaN" "Draw 4"))
         (AI.strategy_3 (num_cards @ wild_cards)) );
     ( "strategy_3 : enemy has special cards and wild cards" >:: fun _ ->
       assert_equal
-        (Some (Card.make_card "Red" "NaN" "Draw2"))
+        (Some (Card.make_card "Wild" "NaN" "Draw4"))
         (AI.strategy_3 (wild_cards @ special_cards)) );
     ( "strategy_3 : enemy has number, special and wild cards" >:: fun _ ->
       assert_equal
-        (Some (Card.make_card "Red" "NaN" "Draw2"))
-        (AI.strategy_1 all_cards) );
+        (Some (Card.make_card "Red" "NaN" "Draw 2"))
+        (AI.strategy_3 all_cards) );
     (*hard_mode_turn Tests*)
     ( "hard_mode_turn: enemy and player has 4 cards" >:: fun _ ->
       assert_equal
-        (Some (Card.make_card "Red" "Zero" "NaN"))
-        (AI.hard_mode_turn all_cards (Card.make_card "Red" "Zero" "NaN") 4) );
+        (Some (Card.make_card "Red" "Zero" "None"))
+        (AI.hard_mode_turn all_cards (Card.make_card "Red" "Zero" "None") 4) );
     ( "hard_mode_turn: enemy has 3 cards and player has 4 cards" >:: fun _ ->
       assert_equal
         (Some (Card.make_card "Red" "NaN" "Draw2"))
         (AI.hard_mode_turn one_of_each_type_cards
-           (Card.make_card "Red" "Zero" "NaN")
+           (Card.make_card "Red" "Zero" "None")
            4) );
     ( "hard_mode_turn: enemy has 4 cards and player has 3 cards" >:: fun _ ->
       assert_equal
-        (Some (Card.make_card "Red" "Nan" "Draw2"))
-        (AI.hard_mode_turn all_cards (Card.make_card "Red" "Zero" "NaN") 3) );
+        (Some (Card.make_card "Red" "NaN" "Draw2"))
+        (AI.hard_mode_turn all_cards (Card.make_card "Red" "Zero" "None") 3) );
   ]
 
 let suite =
