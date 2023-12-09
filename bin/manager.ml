@@ -35,6 +35,11 @@ let rec read_card s (game : Game.t) =
        Card.get_property_description c ^ "\n" in print_endline s; *)
     game
   with Failure x ->
+    print_endline "Discard Pile: \n";
+    Game.print_card game.discard_pile;
+    print_endline "\n \nHand: \n ";
+    Game.print_player_hand game.player_hand 0;
+    print_endline "\n";
     print_endline ("Could not parse number \"" ^ s ^ "\". please try again:");
     print_string "> ";
     read_card (read_line ()) game
@@ -138,7 +143,9 @@ let rec play_card s (game : Game.t) =
             print_endline "\n";
             print_endline
               "Choose new color for wild card: (the options are: red, green, \
-               yellow, and blue) ";
+               yellow, and blue). \n\
+               Note that if you do not input a proper color, you will have to \
+               reneter your card input:";
             let input = read_line () in
             transition_before_opp
               (Game.transform_pile_wild new_game_state input)
@@ -148,7 +155,18 @@ let rec play_card s (game : Game.t) =
           "Card could not be played, please try another card or draw a card.";
         game
   with Failure x ->
-    print_endline ("Could not parse: \"" ^ s ^ "\". please try again:");
+    print_endline (String.make 40 '\n');
+    print_endline "Scroll up if you want to see your previous input!";
+    print_endline
+      "\n---------------------------------------------------------\n";
+    print_endline "Discard Pile: \n";
+    Game.print_card game.discard_pile;
+    print_endline "\n \nHand: \n ";
+    Game.print_player_hand game.player_hand 0;
+    print_endline "\n";
+    print_endline
+      ("Could not parse input: \"" ^ s
+     ^ "\". please try again and reenter your card input:");
     print_string "> ";
     play_card (read_line ()) game
 
@@ -181,10 +199,10 @@ let stage_2 x =
 let rec game_process z (game : Game.t) =
   (* Check if win condition have been met *)
   match Game.check_winner game with
-  | true, 0 -> "\n You Win!"
-  | true, _ -> "\n You Lose :("
+  | true, 0 -> "\n\n You Win!"
+  | true, _ -> "\n\n You Lose :("
   | false, _ -> (
-      print_endline "\n----\nGame Status\n";
+      print_endline "\n\n----\nGame Status\n";
       print_endline "Below is the Discard Pile and your hand! \n";
       print_endline "Discard Pile: \n";
       Game.print_card game.discard_pile;
