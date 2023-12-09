@@ -203,6 +203,7 @@ let stage_2 x =
    game *)
 let rec game_process z (game : Game.t) =
   (* Check if win condition have been met *)
+  print_endline ("THE DIFFICULTY: " ^ game.difficulty);
   match Game.check_winner game with
   | true, 0 -> "\n\n You Win!"
   | true, _ -> "\n\n You Lose :("
@@ -217,6 +218,9 @@ let rec game_process z (game : Game.t) =
       print_endline
         ("The number of cards in the opponents hand:  "
         ^ string_of_int (List.length game.enemy_hand));
+      (match Game.check_voiceline game with
+      | None -> ()
+      | Some x -> print_endline ("\n" ^ x ^ "\n"));
       print_endline
         " \n\
         \   You have the following input choices:\n\

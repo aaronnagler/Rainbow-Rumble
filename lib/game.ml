@@ -135,7 +135,12 @@ module Game = struct
   let transform_pile_wild (game : t) (new_color : string) : t =
     let new_prop = Card.get_property_name game.discard_pile in
     let new_card = Card.make_card new_color "NaN" new_prop in
-    { game with discard_pile = new_card }
+    {
+      discard_pile = new_card;
+      difficulty = game.difficulty;
+      enemy_hand = game.enemy_hand;
+      player_hand = game.player_hand;
+    }
 
   (* Removes [card] from [hand] Returns: [hand] without [card] *)
   let rec remove_card (card : Card.t) = function
@@ -174,10 +179,10 @@ module Game = struct
           | x, y -> (y, x))
     in
     {
-      game with
       player_hand = new_player_hand;
       enemy_hand = new_enemy_hand;
       discard_pile = card;
+      difficulty = game.difficulty;
     }
 
   (* draws a card to a players hand, takes in a boolean "player" which indicates
@@ -191,7 +196,7 @@ module Game = struct
           player_hand = h';
           enemy_hand = game.enemy_hand;
           discard_pile = game.discard_pile;
-          difficulty = "";
+          difficulty = game.difficulty;
         }
     | false ->
         let h' = draw game.enemy_hand 1 in
@@ -199,7 +204,7 @@ module Game = struct
           player_hand = game.player_hand;
           enemy_hand = h';
           discard_pile = game.discard_pile;
-          difficulty = "";
+          difficulty = game.difficulty;
         }
 
   let rec enemy_turn_helper (enemy_hand : Card.t list) (difficulty : string)
