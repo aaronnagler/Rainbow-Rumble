@@ -15,7 +15,7 @@ type numb =
   | Six
   | Seven
   | Eight
-  | Nine
+  | Nine 
   | NaN
 
 (* tuple (name, description) where name is the name of the property and
