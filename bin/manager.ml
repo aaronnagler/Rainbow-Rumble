@@ -65,7 +65,7 @@ let rec read_card s (game : Game.t) =
 let opps_turn (game : Game.t) : Game.t =
   match Game.enemy_turn game with
   | Some x -> (
-      print_endline "The opponent played a new card onto the hand!";
+      print_endline "The opponent played a new card onto the discard pile!";
       print_endline "They played the following: \n";
       Game.print_long x;
       let new_game_state = Game.play_card x game false in
@@ -102,7 +102,7 @@ let transition_before_opp (game : Game.t) : Game.t =
     ("the number of cards in the opponents hand:  "
     ^ string_of_int (List.length game.enemy_hand));
   print_endline "\n Now it is the turn of the opponent.";
-  print_endline "Please type anything below if you are ready to proceed:";
+  print_endline "Press any key to proceed:";
   print_string "> ";
   match read_line () with
   | _ ->
@@ -192,7 +192,7 @@ let rec game_process z (game : Game.t) =
       Game.print_player_hand game.player_hand 0;
       print_endline "\n";
       print_endline
-        ("the number of cards in the opponents hand:  "
+        ("The number of cards in the opponents hand:  "
         ^ string_of_int (List.length game.enemy_hand));
       print_endline
         " \n\
