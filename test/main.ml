@@ -1,6 +1,7 @@
 open OUnit2
 open Game
 open Card
+open Opp
 
 (*All Number Cards*)
 let num_cards =

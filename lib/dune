@@ -1,3 +1,16 @@
 (library
+ (name cards)
+ (public_name Cards)
+ (modules cards))
+
+(library
+ (name opp)
+ (public_name Opp)
+ (libraries cards)
+ (modules opp))
+
+(library
  (name game)
- (public_name Game))
+ (public_name Game)
+ (libraries opp cards)
+ (modules game))
