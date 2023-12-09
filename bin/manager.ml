@@ -20,7 +20,6 @@ let draw_card (game : Game.t) (player : bool) =
   (* print_endline (String.make 40 '\n'); print_endline "Scroll up if you want
      to see your previous input!"; *)
   print_endline "\n---------------------------------------------------------\n";
-  print_endline "a card has been added to your hand";
   Game.draw_update game player
 
 (* Based on the input, prints the corresponding card. *)
@@ -77,7 +76,9 @@ let opps_turn (game : Game.t) : Game.t =
       let new_game_state = Game.play_card x game false in
       (match Game.check_voiceline new_game_state with
       | None -> ()
-      | Some x -> print_endline (x ^ "\n"));
+      | Some x ->
+          print_endline "\n";
+          print_endline ("Quote from the Opponent: " ^ x ^ "\n"));
       match Card.get_color new_game_state.discard_pile with
       | "Wild" ->
           print_endline "\n";
@@ -245,7 +246,9 @@ let rec game_process z (game : Game.t) =
             "please enter a number corresponding to the label of the card";
           print_string "> ";
           game_process () (read_card (read_line ()) game)
-      | "draw" -> game_process () (transition_before_opp (draw_card game true))
+      | "draw" ->
+          print_endline "a card has been added to your hand";
+          game_process () (transition_before_opp (draw_card game true))
       | _ ->
           print_endline "Please enter a valid input";
           game_process () game)
