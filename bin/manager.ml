@@ -1,4 +1,5 @@
 open Game
+open Cards
 
 (* read-eval-print loop *)
 let rec repl (eval : string -> string) : unit =
