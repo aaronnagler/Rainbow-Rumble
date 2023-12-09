@@ -73,7 +73,7 @@ module AI = struct
             | _ -> strategy_3 enemy_hand))
 
   (* The enemy will attempt to select a playable card from their hand. If
-     succesful, return the card it will playx from its hand. Otherwise return
+     succesful, return the card it will play from its hand. Otherwise return
      None, meaning the enemy has no cards to play from its hand *)
   let enemy_turn (enemy_hand : Card.t list) (difficulty : string)
       (discard_pile : Card.t) (player_hand_num : int) : Card.t option =
