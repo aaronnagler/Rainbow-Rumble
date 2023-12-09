@@ -101,6 +101,9 @@ module Game = struct
       difficulty = d;
     }
 
+  let create_game h1 h2 dis dif : t =
+    { player_hand = h1; enemy_hand = h2; discard_pile = dis; difficulty = dif }
+
   let is_legal_play (card : Card.t) (discard_pile : Card.t) : bool =
     let same_color, same_number, same_property =
       ( Card.get_color card = Card.get_color discard_pile,
@@ -195,24 +198,12 @@ module Game = struct
       (List.length game.player_hand)
 
   let most_common_color (hand : Card.t list) : string =
-    let rec increment_color acc (hand : Card.t list) =
-      match hand with
-      | [] -> ()
-      | h :: t -> (
-          match Card.get_color h with
-          | "Red" -> acc.(0) <- acc.(0) + 1
-          | "Blue" -> acc.(1) <- acc.(1) + 1
-          | "Green" -> acc.(2) <- acc.(2) + 1
-          | "Yellow" -> acc.(3) <- acc.(3) + 1
-          | "Wild" -> ()
-          | _ -> failwith "an error occurred")
-    in
-    let acc = [| 0; 0; 0; 0 |] in
-    increment_color acc hand;
-    if acc.(0) >= acc.(1) && acc.(0) >= acc.(2) && acc.(0) >= acc.(3) then "Red"
-    else if acc.(1) >= acc.(2) && acc.(1) >= acc.(3) then "Blue"
-    else if acc.(2) >= acc.(3) then "Green"
-    else "Yellow"
+    match Card.most_common_color hand with
+    | Red -> "Red"
+    | Blue -> "Blue"
+    | Green -> "Green"
+    | Yellow -> "Yellow"
+    | Wild -> "Wild"
 
   let check_winner (game : t) : bool * int =
     match (List.length game.player_hand, List.length game.enemy_hand) with

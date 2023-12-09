@@ -18,12 +18,24 @@ open Opp
     implementations; we could just test it by what the function is supposed to
     do.
 
+    For similar reasons as above, we also used OUnit tests for most of the AI
+    module (easy_mode_turn, strategy_1, strategy_2, strategy_3, hard_mode_turn).
+
     Manual testing was done by running the program to ensure certain scenarios
     would lead to the correct outcomes. We had to do manual testing for
-    functions whose purpose it was to print out objects of the game. We would do
-    this just by running the game, and if necessary (depending on the function),
-    exploring corner cases that might change the output of that particular print
-    function.
+    functions whose purpose it was to print out objects of the game
+    (print_colored_text, print_card, print_player_hand, print_both_hands in the
+    Game module). We would do this just by running the game, and if necessary
+    (depending on the function), exploring corner cases that might change the
+    output of that particular print function.
+
+    We also had to test manually for functionality that is supposed to have
+    random output. This includes functions in the AI module (enemy_turn,
+    uno_voiceline, enemy_voiceline) and the Game module (draw, draw_valid_card).
+    For these functions, we just observed their functionality in the REPL and
+    made sure it was what we expected. For example, with draw, we listed out in
+    a document what cards should be possible to draw, and we repeatedly drew
+    from the deck to make sure we were getting the expected cards.
 
     TODO ** OTHER PARTS OF THE TEST PLAN ARE CURRENTLY INCOMPLETE** TODO
 
@@ -618,6 +630,136 @@ let game_tests =
         (Game.is_legal_play
            (Card.make_card "Green" "1" "None")
            (Card.make_card "Yellow" "4" "None")) );
+    (* is_valid_first_card tests *)
+    ( "is_valid_first_card number card" >:: fun _ ->
+      assert_equal true
+        (Game.is_valid_first_card (Card.make_card "Green" "5" "None")) );
+    ( "is_valid_first_card draw 2" >:: fun _ ->
+      assert_equal false
+        (Game.is_valid_first_card (Card.make_card "Red" "NaN" "Draw 2")) );
+    ( "is_valid_first_card draw 4" >:: fun _ ->
+      assert_equal false
+        (Game.is_valid_first_card (Card.make_card "Wild" "NaN" "Draw 4")) );
+    ( "is_valid_first_card wild card" >:: fun _ ->
+      assert_equal false
+        (Game.is_valid_first_card (Card.make_card "Wild" "NaN" "None")) );
+    (* transform_wild_pile tests *)
+    ( "transform_pile_wild wild card" >:: fun _ ->
+      assert_equal
+        (Game.create_game
+           [ Card.make_card "Red" "3" "None" ]
+           [ Card.make_card "Green" "4" "None" ]
+           (Card.make_card "Red" "NaN" "None")
+           "hard")
+        (Game.transform_pile_wild
+           (Game.create_game
+              [ Card.make_card "Red" "3" "None" ]
+              [ Card.make_card "Green" "4" "None" ]
+              (Card.make_card "Wild" "NaN" "None")
+              "hard")
+           "Red") );
+    ( "transform_pile_wild wild card" >:: fun _ ->
+      assert_equal
+        (Game.create_game
+           [ Card.make_card "Red" "3" "None" ]
+           [
+             Card.make_card "Green" "4" "None";
+             Card.make_card "Blue" "4" "Draw 2";
+           ]
+           (Card.make_card "Blue" "NaN" "Draw 4")
+           "medium")
+        (Game.transform_pile_wild
+           (Game.create_game
+              [ Card.make_card "Red" "3" "None" ]
+              [
+                Card.make_card "Green" "4" "None";
+                Card.make_card "Blue" "4" "Draw 2";
+              ]
+              (Card.make_card "Wild" "NaN" "Draw 4")
+              "medium")
+           "Blue") );
+    (* remove_card tests*)
+    ( "remove_card single-element list (contains)" >:: fun _ ->
+      assert_equal []
+        (Game.remove_card
+           (Card.make_card "Red" "1" "None")
+           [ Card.make_card "Red" "1" "None" ]) );
+    ( "remove_card single-element list (doesn't contain)" >:: fun _ ->
+      assert_equal
+        [ Card.make_card "Red" "NaN" "Draw 2" ]
+        (Game.remove_card
+           (Card.make_card "Red" "1" "None")
+           [ Card.make_card "Red" "NaN" "Draw 2" ]) );
+    ( "remove_card empty list" >:: fun _ ->
+      assert_equal [] (Game.remove_card (Card.make_card "Red" "1" "None") []) );
+    ( "remove_card multi-element list" >:: fun _ ->
+      assert_equal
+        [
+          Card.make_card "Red" "NaN" "Draw 2"; Card.make_card "Green" "3" "None";
+        ]
+        (Game.remove_card
+           (Card.make_card "Blue" "5" "None")
+           [
+             Card.make_card "Red" "NaN" "Draw 2";
+             Card.make_card "Blue" "5" "None";
+             Card.make_card "Green" "3" "None";
+           ]) );
+    ( "remove_card multi-element list, repeats" >:: fun _ ->
+      assert_equal
+        [
+          Card.make_card "Red" "NaN" "Draw 2"; Card.make_card "Blue" "5" "None";
+        ]
+        (Game.remove_card
+           (Card.make_card "Blue" "5" "None")
+           [
+             Card.make_card "Blue" "5" "None";
+             Card.make_card "Red" "NaN" "Draw 2";
+             Card.make_card "Blue" "5" "None";
+           ]) );
+    ( "remove_card remove draw 4" >:: fun _ ->
+      assert_equal
+        [ Card.make_card "Blue" "5" "None" ]
+        (Game.remove_card
+           (Card.make_card "Wild" "NaN" "Draw 4")
+           [
+             Card.make_card "Blue" "5" "None";
+             Card.make_card "Wild" "NaN" "Draw 4";
+           ]) );
+    ( "remove_card remove wild" >:: fun _ ->
+      assert_equal
+        [
+          Card.make_card "Wild" "NaN" "Draw 4";
+          Card.make_card "Wild" "NaN" "Draw 4";
+        ]
+        (Game.remove_card
+           (Card.make_card "Wild" "NaN" "None")
+           [
+             Card.make_card "Wild" "NaN" "Draw 4";
+             Card.make_card "Wild" "NaN" "None";
+             Card.make_card "Wild" "NaN" "Draw 4";
+           ]) );
+    (* check_winner tests *)
+    ( "check_winner player wins" >:: fun _ ->
+      assert_equal (true, 0)
+        (Game.check_winner
+           (Game.create_game []
+              [ Card.make_card "Wild" "NaN" "Draw 4" ]
+              (Card.make_card "Green" "NaN" "Draw 2")
+              "easy")) );
+    ( "check_winner opponent wins" >:: fun _ ->
+      assert_equal (true, 1)
+        (Game.check_winner
+           (Game.create_game
+              [ Card.make_card "Wild" "NaN" "Draw 4" ]
+              []
+              (Card.make_card "Green" "NaN" "Draw 2")
+              "medium")) );
+    ( "check_winner no one wins" >:: fun _ ->
+      assert_equal (false, 2)
+        (Game.check_winner
+           (Game.create_game special_cards num_cards
+              (Card.make_card "Blue" "1" "None")
+              "hard")) );
   ]
 
 (**Tests for functions in the AI module *)

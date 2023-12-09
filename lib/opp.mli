@@ -41,6 +41,5 @@ module AI : sig
      reveal information about the last card that the opponent holds.*)
 
   val enemy_voiceline : Card.t list -> string -> string option
-  (**Depending on the enemy's hand and difficulty, certain voicelines will be
-     said*)
+  (**Returns some voiceline depending on the enemy's hand and difficulty.*)
 end

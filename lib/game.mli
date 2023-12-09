@@ -34,7 +34,8 @@ module Game : sig
   (**Returns [hand] with [n] random cards added to the hand. *)
 
   val is_valid_first_card : Card.t -> bool
-  (**Returns true if [card] is a valid card to initialize the discard_pile. *)
+  (**Returns true if [card] is a valid card to initialize the discard_pile. That
+     is, card is not wild color, has a number, and has no special properties. *)
 
   val draw_valid_card : (Card.t -> bool) -> Card.t
   (**Keeps drawing a card at random until the card satisfies a given predicate,
@@ -44,6 +45,10 @@ module Game : sig
   (**Initializes game state. Depending on difficulty [d], creates player and
      enemy hands by drawing 7 cards for each. *)
 
+  val create_game : Card.t list -> Card.t list -> Card.t -> string -> t
+  (**Returns a game with the specified properties (player hand, enemy hand,
+     discard pile, and game difficulty)*)
+
   val is_legal_play : Card.t -> Card.t -> bool
   (**Returns true if a card can legally be played on [discard_pile]. *)
 
@@ -52,7 +57,7 @@ module Game : sig
      user-described color [new_color] *)
 
   val remove_card : Card.t -> Card.t list -> Card.t list
-  (**Removes [card] from [hand] Returns: [hand] without [card] *)
+  (**Returns [hand] with the first instance of [card] removed. *)
 
   val apply_effect :
     Card.t -> Card.t list -> Card.t list -> Card.t list * Card.t list
@@ -76,11 +81,15 @@ module Game : sig
      playable cards in hand, then return None*)
 
   val most_common_color : Card.t list -> string
-  (**Returns the most prevalant color in hand in string form.*)
+  (**Returns the string representation of the color with the most occurences in
+     the cards of the hand. In the result of ties between colors (including the
+     absence of any color cards), the preference will be Red, Blue, Green, then
+     Yellow.*)
 
   val check_winner : t -> bool * int
   (**Checks if either player or opponent meets the win condition: if they have 0
-     cards in their hand *)
+     cards in their hand. Returns (true, 0) if player winds, (true, 1) if
+     opponent winds, and (false, 2) if there is no current winner. *)
 
   val check_voiceline : t -> string option
 end
