@@ -79,17 +79,40 @@ let one_of_each_type_cards =
 let card_tests =
   [
     (* get_color tests*)
-    ( "get_color regular card" >:: fun _ ->
+    ( "get_color red regular card" >:: fun _ ->
       assert_equal "Red" (Card.get_color (Card.make_card "Red" "2" "None")) );
-    ( "get_color draw 2" >:: fun _ ->
+    ( "get_color green regular card" >:: fun _ ->
+      assert_equal "Green" (Card.get_color (Card.make_card "Green" "2" "None"))
+    );
+    ( "get_color blue regular card" >:: fun _ ->
+      assert_equal "Blue" (Card.get_color (Card.make_card "Blue" "2" "None")) );
+    ( "get_color yellow regular card" >:: fun _ ->
+      assert_equal "Yellow"
+        (Card.get_color (Card.make_card "Yellow" "2" "None")) );
+    ( "get_color blue draw 2" >:: fun _ ->
       assert_equal "Blue" (Card.get_color (Card.make_card "Blue" "2" "Draw 2"))
     );
+    ( "get_color red draw 2" >:: fun _ ->
+      assert_equal "Red" (Card.get_color (Card.make_card "Red" "2" "Draw 2")) );
+    ( "get_color green draw 2" >:: fun _ ->
+      assert_equal "Green"
+        (Card.get_color (Card.make_card "Green" "2" "Draw 2")) );
+    ( "get_color yellow draw 2" >:: fun _ ->
+      assert_equal "Yellow"
+        (Card.get_color (Card.make_card "Yellow" "2" "Draw 2")) );
     ( "get_color draw 4" >:: fun _ ->
       assert_equal "Wild" (Card.get_color (Card.make_card "Wild" "2" "Draw 4"))
     );
+    ( "get_color regular wild card" >:: fun _ ->
+      assert_equal "Wild" (Card.get_color (Card.make_card "Wild" "NaN" "None"))
+    );
     (* get number tests*)
-    ( "get_number regular card" >:: fun _ ->
+    ( "get_number regular card 5" >:: fun _ ->
       assert_equal "5" (Card.get_number (Card.make_card "Yellow" "5" "None")) );
+    ( "get_number regular card 0" >:: fun _ ->
+      assert_equal "0" (Card.get_number (Card.make_card "Yellow" "0" "None")) );
+    ( "get_number regular card 1" >:: fun _ ->
+      assert_equal "1" (Card.get_number (Card.make_card "Yellow" "1" "None")) );
     ( "get_number draw 2" >:: fun _ ->
       assert_equal "NaN" (Card.get_number (Card.make_card "Red" "NaN" "Draw 2"))
     );
@@ -375,6 +398,66 @@ let game_tests =
         (Game.is_legal_play
            (Card.make_card "Wild" "NaN" "None")
            (Card.make_card "Wild" "NaN" "None")) );
+    ( "is_legal_play playing red on blue" >:: fun _ ->
+      assert_equal false
+        (Game.is_legal_play
+           (Card.make_card "Red" "1" "None")
+           (Card.make_card "Blue" "2" "None")) );
+    ( "is_legal_play playing red on green" >:: fun _ ->
+      assert_equal false
+        (Game.is_legal_play
+           (Card.make_card "Red" "2" "None")
+           (Card.make_card "Green" "4" "None")) );
+    ( "is_legal_play playing red on yellow" >:: fun _ ->
+      assert_equal false
+        (Game.is_legal_play
+           (Card.make_card "Red" "9" "None")
+           (Card.make_card "Yellow" "7" "None")) );
+    ( "is_legal_play playing blue on red" >:: fun _ ->
+      assert_equal false
+        (Game.is_legal_play
+           (Card.make_card "Blue" "2" "None")
+           (Card.make_card "Red" "3" "None")) );
+    ( "is_legal_play playing blue on yellow" >:: fun _ ->
+      assert_equal false
+        (Game.is_legal_play
+           (Card.make_card "Blue" "9" "None")
+           (Card.make_card "Yellow" "2" "None")) );
+    ( "is_legal_play playing blue on green" >:: fun _ ->
+      assert_equal false
+        (Game.is_legal_play
+           (Card.make_card "Blue" "5" "None")
+           (Card.make_card "Green" "6" "None")) );
+    ( "is_legal_play playing yellow on red" >:: fun _ ->
+      assert_equal false
+        (Game.is_legal_play
+           (Card.make_card "Yellow" "2" "None")
+           (Card.make_card "Red" "9" "None")) );
+    ( "is_legal_play playing yellow on blue" >:: fun _ ->
+      assert_equal false
+        (Game.is_legal_play
+           (Card.make_card "Yellow" "7" "None")
+           (Card.make_card "Blue" "8" "None")) );
+    ( "is_legal_play playing yellow on green" >:: fun _ ->
+      assert_equal false
+        (Game.is_legal_play
+           (Card.make_card "Yellow" "4" "None")
+           (Card.make_card "Green" "2" "None")) );
+    ( "is_legal_play playing green on red" >:: fun _ ->
+      assert_equal false
+        (Game.is_legal_play
+           (Card.make_card "Green" "3" "None")
+           (Card.make_card "Red" "5" "None")) );
+    ( "is_legal_play playing green on blue" >:: fun _ ->
+      assert_equal false
+        (Game.is_legal_play
+           (Card.make_card "Green" "6" "None")
+           (Card.make_card "Blue" "2" "None")) );
+    ( "is_legal_play playing green on yellow" >:: fun _ ->
+      assert_equal false
+        (Game.is_legal_play
+           (Card.make_card "Green" "1" "None")
+           (Card.make_card "Yellow" "4" "None")) );
   ]
 
 let opp_tests =
