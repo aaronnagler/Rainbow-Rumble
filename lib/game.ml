@@ -55,7 +55,7 @@ module Game = struct
     | "Wild", _, "None", _ ->
         print_string "Card: Wild; Property: none; Description: none"
     | color, _, "Draw 2", d ->
-        print_string ("Card: " ^ color ^ "Property: Draw 2; Description: " ^ d)
+        print_string ("Card: " ^ color ^ "; Property: Draw 2; Description: " ^ d)
     | color, numb, _, _ ->
         print_string
           ("Card: " ^ color ^ " " ^ numb ^ "; Property: none; Description: none")
@@ -198,7 +198,7 @@ module Game = struct
         {
           player_hand = game.player_hand;
           enemy_hand = h';
-          discard_pile = draw_valid_card is_valid_first_card;
+          discard_pile = game.discard_pile;
           difficulty = "";
         }
 

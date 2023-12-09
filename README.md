@@ -1,9 +1,11 @@
-# CS 3110 Prject
+# Rubberduck's CS 3110 Project: Rainbow Card Rumble!
 
-# Jacob Seto, jjs472
+## Team Members:
 
-# Benjamin Perl, bdp58
+- Jacob Seto, jjs472
 
-# Aaron Nagler, atn45
+- Benjamin Perl, bdp58
 
-# Derek Thompson, det75
+- Aaron Nagler, atn45
+
+- Derek Thompson, det75

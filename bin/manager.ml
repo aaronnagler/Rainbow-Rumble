@@ -1,4 +1,5 @@
 open Game
+open Cards
 
 (* read-eval-print loop *)
 let rec repl (eval : string -> string) : unit =
@@ -35,6 +36,11 @@ let rec read_card s (game : Game.t) =
        Card.get_property_description c ^ "\n" in print_endline s; *)
     game
   with Failure x ->
+    print_endline "Discard Pile: \n";
+    Game.print_card game.discard_pile;
+    print_endline "\n \nHand: \n ";
+    Game.print_player_hand game.player_hand 0;
+    print_endline "\n";
     print_endline ("Could not parse number \"" ^ s ^ "\". please try again:");
     print_string "> ";
     read_card (read_line ()) game
@@ -65,7 +71,7 @@ let rec read_card s (game : Game.t) =
 let opps_turn (game : Game.t) : Game.t =
   match Game.enemy_turn game with
   | Some x -> (
-      print_endline "The opponent played a new card onto the hand!";
+      print_endline "The opponent played a new card onto the discard pile!";
       print_endline "They played the following: \n";
       Game.print_long x;
       let new_game_state = Game.play_card x game false in
@@ -102,7 +108,7 @@ let transition_before_opp (game : Game.t) : Game.t =
     ("the number of cards in the opponents hand:  "
     ^ string_of_int (List.length game.enemy_hand));
   print_endline "\n Now it is the turn of the opponent.";
-  print_endline "Please type anything below if you are ready to proceed:";
+  print_endline "Press any key to proceed:";
   print_string "> ";
   match read_line () with
   | _ ->
@@ -138,7 +144,9 @@ let rec play_card s (game : Game.t) =
             print_endline "\n";
             print_endline
               "Choose new color for wild card: (the options are: red, green, \
-               yellow, and blue) ";
+               yellow, and blue). \n\
+               Note that if you do not input a proper color, you will have to \
+               reneter your card input:";
             let input = read_line () in
             transition_before_opp
               (Game.transform_pile_wild new_game_state input)
@@ -148,7 +156,18 @@ let rec play_card s (game : Game.t) =
           "Card could not be played, please try another card or draw a card.";
         game
   with Failure x ->
-    print_endline ("Could not parse: \"" ^ s ^ "\". please try again:");
+    print_endline (String.make 40 '\n');
+    print_endline "Scroll up if you want to see your previous input!";
+    print_endline
+      "\n---------------------------------------------------------\n";
+    print_endline "Discard Pile: \n";
+    Game.print_card game.discard_pile;
+    print_endline "\n \nHand: \n ";
+    Game.print_player_hand game.player_hand 0;
+    print_endline "\n";
+    print_endline
+      ("Could not parse input: \"" ^ s
+     ^ "\". please try again and reenter your card input:");
     print_string "> ";
     play_card (read_line ()) game
 
@@ -181,10 +200,10 @@ let stage_2 x =
 let rec game_process z (game : Game.t) =
   (* Check if win condition have been met *)
   match Game.check_winner game with
-  | true, 0 -> "\n You Win!"
-  | true, _ -> "\n You Lose :("
+  | true, 0 -> "\n\n You Win!"
+  | true, _ -> "\n\n You Lose :("
   | false, _ -> (
-      print_endline "\n----\nGame Status\n";
+      print_endline "\n\n----\nGame Status\n";
       print_endline "Below is the Discard Pile and your hand! \n";
       print_endline "Discard Pile: \n";
       Game.print_card game.discard_pile;
@@ -192,7 +211,7 @@ let rec game_process z (game : Game.t) =
       Game.print_player_hand game.player_hand 0;
       print_endline "\n";
       print_endline
-        ("the number of cards in the opponents hand:  "
+        ("The number of cards in the opponents hand:  "
         ^ string_of_int (List.length game.enemy_hand));
       print_endline
         " \n\
