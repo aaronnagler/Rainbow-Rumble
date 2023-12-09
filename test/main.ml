@@ -7,70 +7,75 @@ open Opp
 let num_cards =
   [
     (*Red*)
-    { color = Red; number = Zero; property = None };
-    { color = Red; number = One; property = None };
-    { color = Red; number = Two; property = None };
-    { color = Red; number = Three; property = None };
-    { color = Red; number = Four; property = None };
-    { color = Red; number = Five; property = None };
-    { color = Red; number = Six; property = None };
-    { color = Red; number = Seven; property = None };
-    { color = Red; number = Eight; property = None };
-    { color = Red; number = Nine; property = None };
+    Card.make_card "Red" "Zero" "None";
+    Card.make_card "Red" "One" "None";
+    Card.make_card "Red" "Two" "None";
+    Card.make_card "Red" "Three" "None";
+    Card.make_card "Red" "Four" "None";
+    Card.make_card "Red" "Five" "None";
+    Card.make_card "Red" "Six" "None";
+    Card.make_card "Red" "Seven" "None";
+    Card.make_card "Red" "Eight" "None";
+    Card.make_card "Red" "Nine" "None";
     (*Blue*)
-    { color = Blue; number = Zero; property = None };
-    { color = Blue; number = One; property = None };
-    { color = Blue; number = Two; property = None };
-    { color = Blue; number = Three; property = None };
-    { color = Blue; number = Four; property = None };
-    { color = Blue; number = Five; property = None };
-    { color = Blue; number = Six; property = None };
-    { color = Blue; number = Seven; property = None };
-    { color = Blue; number = Eight; property = None };
-    { color = Blue; number = Nine; property = None };
+    Card.make_card "Blue" "Zero" "None";
+    Card.make_card "Blue" "One" "None";
+    Card.make_card "Blue" "Two" "None";
+    Card.make_card "Blue" "Three" "None";
+    Card.make_card "Blue" "Four" "None";
+    Card.make_card "Blue" "Five" "None";
+    Card.make_card "Blue" "Six" "None";
+    Card.make_card "Blue" "Seven" "None";
+    Card.make_card "Blue" "Eight" "None";
+    Card.make_card "Blue" "Nine" "None";
     (*Green*)
-    { color = Green; number = Zero; property = None };
-    { color = Green; number = One; property = None };
-    { color = Green; number = Two; property = None };
-    { color = Green; number = Three; property = None };
-    { color = Green; number = Four; property = None };
-    { color = Green; number = Five; property = None };
-    { color = Green; number = Six; property = None };
-    { color = Green; number = Seven; property = None };
-    { color = Green; number = Eight; property = None };
-    { color = Green; number = Nine; property = None };
+    Card.make_card "Green" "Zero" "None";
+    Card.make_card "Green" "One" "None";
+    Card.make_card "Green" "Two" "None";
+    Card.make_card "Green" "Three" "None";
+    Card.make_card "Green" "Four" "None";
+    Card.make_card "Green" "Five" "None";
+    Card.make_card "Green" "Six" "None";
+    Card.make_card "Green" "Seven" "None";
+    Card.make_card "Green" "Eight" "None";
+    Card.make_card "Green" "Nine" "None";
     (*Yellow*)
-    { color = Yellow; number = Zero; property = None };
-    { color = Yellow; number = One; property = None };
-    { color = Yellow; number = Two; property = None };
-    { color = Yellow; number = Three; property = None };
-    { color = Yellow; number = Four; property = None };
-    { color = Yellow; number = Five; property = None };
-    { color = Yellow; number = Six; property = None };
-    { color = Yellow; number = Seven; property = None };
-    { color = Yellow; number = Eight; property = None };
-    { color = Yellow; number = Nine; property = None };
+    Card.make_card "Yellow" "Zero" "None";
+    Card.make_card "Yellow" "One" "None";
+    Card.make_card "Yellow" "Two" "None";
+    Card.make_card "Yellow" "Three" "None";
+    Card.make_card "Yellow" "Four" "None";
+    Card.make_card "Yellow" "Five" "None";
+    Card.make_card "Yellow" "Six" "None";
+    Card.make_card "Yellow" "Seven" "None";
+    Card.make_card "Yellow" "Eight" "None";
+    Card.make_card "Yellow" "Nine" "None";
   ]
 
 (*All Special Cards*)
 let special_cards =
   [
-    { color = Red; number = NaN; property = Some Draw2 };
-    { color = Blue; number = NaN; property = Some Draw2 };
-    { color = Green; number = NaN; property = Some Draw2 };
-    { color = Yellow; number = NaN; property = Some Draw2 };
-    { color = Wild; number = NaN; property = Some Draw2 };
+    Card.make_card "Red" "NaN" "Draw2";
+    Card.make_card "Blue" "NaN" "Draw2";
+    Card.make_card "Green" "NaN" "Draw2";
+    Card.make_card "Yellow" "NaN" "Draw2";
+    Card.make_card "Wild" "NaN" "Draw2";
   ]
 
 (*All Wild Cards*)
 let wild_cards =
-  [
-    { color = Wild; number = NaN; property = None };
-    { color = Wild; number = NaN; property = Some Draw4 };
-  ]
+  [ Card.make_card "Wild" "NaN" "Draw2"; Card.make_card "Wild" "NaN" "Draw4" ]
 
 (*Full All Cards*)
 let all_cards = num_cards @ special_cards @ wild_cards
+
+(*One type of card from each category*)
+let one_of_each_type_cards =
+  [
+    Card.make_card "Red" "Zero" "NaN";
+    Card.make_card "Red" "NaN" "Draw2";
+    Card.make_card "Wild" "NaN" "NaN";
+  ]
 
 let card_tests =
   [
@@ -238,50 +243,105 @@ let opp_tests =
     (*strategy 1*)
     ( "strategy_1 : enemy has only number cards" >:: fun _ ->
       assert_equal
-        (Some { color = Red; number = Zero; property = None })
-        (Some { color = Red; number = Zero; property = None }) );
+        (Some (Card.make_card "Red" "Zero" "NaN"))
+        (AI.strategy_1 num_cards) );
     ( "strategy_1 : enemy has only special cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "NaN" "Draw2"))
+        (AI.strategy_1 special_cards) );
     ( "strategy_1 : enemy has only wild cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Wild" "NaN" "NaN"))
+        (AI.strategy_1 wild_cards) );
     ( "strategy_1 : enemy has number cards and special cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "Zero" "NaN"))
+        (AI.strategy_1 (num_cards @ special_cards)) );
     ( "strategy_1 : enemy has number cards and wild cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "Zero" "NaN"))
+        (AI.strategy_1 (num_cards @ wild_cards)) );
     ( "strategy_1 : enemy has special cards and wild cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "NaN" "Draw2"))
+        (AI.strategy_1 (special_cards @ special_cards)) );
     ( "strategy_1 : enemy has number, special and wild cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "Zero" "NaN"))
+        (AI.strategy_1 all_cards) );
     (*strategy 2*)
     ( "strategy_2 : enemy has only number cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "Zero" "NaN"))
+        (AI.strategy_2 num_cards) );
     ( "strategy_2 : enemy has only special cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "NaN" "Draw2"))
+        (AI.strategy_2 special_cards) );
     ( "strategy_2 : enemy has only wild cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Wild" "NaN" "NaN"))
+        (AI.strategy_2 wild_cards) );
     ( "strategy_2 : enemy has number cards and special cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "NaN" "Draw2"))
+        (AI.strategy_2 (num_cards @ special_cards)) );
     ( "strategy_2 : enemy has number cards and wild cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "Zero" "NaN"))
+        (AI.strategy_2 (num_cards @ wild_cards)) );
     ( "strategy_2 : enemy has special cards and wild cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "NaN" "Draw2"))
+        (AI.strategy_2 (special_cards @ wild_cards)) );
     ( "strategy_2 : enemy has number, special and wild cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "NaN" "Draw2"))
+        (AI.strategy_2 all_cards) );
     (*strategy 3*)
     ( "strategy_3 : enemy has only number cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "Zero" "NaN"))
+        (AI.strategy_3 num_cards) );
     ( "strategy_3 : enemy has only special cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "NaN" "Draw2"))
+        (AI.strategy_3 special_cards) );
     ( "strategy_3 : enemy has only wild cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Wild" "NaN" "NaN"))
+        (AI.strategy_3 wild_cards) );
     ( "strategy_3 : enemy has number cards and special cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "NaN" "Draw2"))
+        (AI.strategy_3 (num_cards @ special_cards)) );
     ( "strategy_3 : enemy has number cards and wild cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Wild" "NaN" "NaN"))
+        (AI.strategy_3 (num_cards @ wild_cards)) );
     ( "strategy_3 : enemy has special cards and wild cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "NaN" "Draw2"))
+        (AI.strategy_3 (wild_cards @ special_cards)) );
     ( "strategy_3 : enemy has number, special and wild cards" >:: fun _ ->
-      assert_equal true true );
+      assert_equal
+        (Some (Card.make_card "Red" "NaN" "Draw2"))
+        (AI.strategy_1 all_cards) );
+    (*hard_mode_turn Tests*)
+    ( "hard_mode_turn: enemy and player has 4 cards" >:: fun _ ->
+      assert_equal
+        (Some (Card.make_card "Red" "Zero" "NaN"))
+        (AI.hard_mode_turn all_cards (Card.make_card "Red" "Zero" "NaN") 4) );
+    ( "hard_mode_turn: enemy has 3 cards and player has 4 cards" >:: fun _ ->
+      assert_equal
+        (Some (Card.make_card "Red" "NaN" "Draw2"))
+        (AI.hard_mode_turn one_of_each_type_cards
+           (Card.make_card "Red" "Zero" "NaN")
+           4) );
+    ( "hard_mode_turn: enemy has 4 cards and player has 3 cards" >:: fun _ ->
+      assert_equal
+        (Some (Card.make_card "Red" "Nan" "Draw2"))
+        (AI.hard_mode_turn all_cards (Card.make_card "Red" "Zero" "NaN") 3) );
   ]
 
 let suite =
