@@ -1,5 +1,4 @@
 open Cards
-(* open Game *)
 
 module AI = struct
   (*Given a hand, a random card will be selected to be placed on the pile. If
