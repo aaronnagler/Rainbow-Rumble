@@ -10,23 +10,34 @@ let rec repl (eval : string -> string) : unit =
       input |> eval |> print_endline;
       repl eval
 
+(* let rec blank_space i = print_endline (String.make i '\n'); *)
+
 (* Draws a card to the players hand, returns the updated game, if player is
    [true] then draws card to players hand, if player is false then draws card to
    opponent's hand *)
 let draw_card (game : Game.t) (player : bool) =
+  (* print_endline (String.make 40 '\n'); print_endline "Scroll up if you want
+     to see your previous input!"; *)
   print_endline "\n---------------------------------------------------------\n";
   print_endline "a card has been added to your hand";
   Game.draw_update game player
 
 (* Based on the input, prints the corresponding card. *)
-let read_card s (game : Game.t) =
+let rec read_card s (game : Game.t) =
+  print_endline (String.make 40 '\n');
+  print_endline "Scroll up if you want to see your previous input!";
   print_endline "\n---------------------------------------------------------\n";
-  let c = List.nth game.player_hand (int_of_string s) in
-  print_endline "\n";
-  Game.print_long c;
-  (* let s = "\n" ^ "\n" ^ Card.get_property_name c ^ ": " ^
-     Card.get_property_description c ^ "\n" in print_endline s; *)
-  game
+  try
+    let c = List.nth game.player_hand (int_of_string s) in
+    print_endline "\n";
+    Game.print_long c;
+    (* let s = "\n" ^ "\n" ^ Card.get_property_name c ^ ": " ^
+       Card.get_property_description c ^ "\n" in print_endline s; *)
+    game
+  with Failure x ->
+    print_endline ("Could not parse number \"" ^ s ^ "\". please try again:");
+    print_string "> ";
+    read_card (read_line ()) game
 
 (* Returns the updated game after the function plays the card corresponding to
    user input (A-F) if the card is valid, if not, does not play the card, and
@@ -54,90 +65,113 @@ let read_card s (game : Game.t) =
 let opps_turn (game : Game.t) : Game.t =
   match Game.enemy_turn game with
   | Some x -> (
-      print_endline "the opponent played a new card onto the hand!";
-      print_endline "the opponent played the following card: ";
+      print_endline "The opponent played a new card onto the hand!";
+      print_endline "They played the following: \n";
       Game.print_long x;
       let new_game_state = Game.play_card x game false in
       match Card.get_color new_game_state.discard_pile with
       | "Wild" ->
+          print_endline "\n";
           print_endline
-            "\n\
-            \ the card the opponent played has the following effect on your \
-             hand:";
+            "The card the opponent played has the following effect on your \
+             hand: \n";
           Game.print_desc x;
           Game.transform_pile_wild new_game_state
             (Game.most_common_color game.enemy_hand)
       | _ -> new_game_state)
-  | None -> draw_card game false
+  | None ->
+      print_endline "The opponent chose to draw a card";
+      draw_card game false
 
 (* Call this function if the player was successfully able to have a turn, this
    function outputs the result of their turn, and asks if they are ready for the
    opponent's turn, and if so, triggers the opponents turn. *)
 let transition_before_opp (game : Game.t) : Game.t =
+  print_endline (String.make 40 '\n');
+  print_endline "Scroll up if you want to see your previous input!";
   print_endline "\n---------------------------------------------------------\n";
-  print_endline
-    "Your play was successful! Here is the updated game status:\n\n\n\n\n   ";
-  print_endline "\n  \nGame Status\n";
-  print_endline "    Below is the Discard Pile and your hand! \n";
-  print_endline "        Discard Pile: \n";
+  print_endline "Your play was successful! Here is the updated game status:";
+  print_endline "\n  \n----\nGame Status\n";
+  print_endline "Below is the Discard Pile and your hand! \n";
+  print_endline "Discard Pile: \n";
   Game.print_card game.discard_pile;
-  print_endline "\n \n        Hand: \n ";
+  print_endline "\n \nHand: \n ";
   Game.print_player_hand game.player_hand 0;
   print_endline "\n";
-  print_endline "the number of cards in the opponents hand:";
-  print_endline "\n";
-  print_endline ("     " ^ string_of_int (List.length game.enemy_hand));
-  print_endline "Now it is the turn of the opponent.";
+  print_endline
+    ("the number of cards in the opponents hand:  "
+    ^ string_of_int (List.length game.enemy_hand));
+  print_endline "\n Now it is the turn of the opponent.";
   print_endline "Please type anything below if you are ready to proceed:";
   print_string "> ";
   match read_line () with
   | _ ->
+      print_endline (String.make 40 '\n');
+      print_endline "Scroll up if you want to see your previous input!";
       print_endline
         "\n---------------------------------------------------------\n";
-      print_endline "opponent's turn!";
+      print_endline "Opponent's turn! \n";
       opps_turn game
 
 (* Same thing as above [play_card], but with pattern matching instead of
    if-statements ( +2 lines :D )*)
-let play_card s (game : Game.t) =
+let rec play_card s (game : Game.t) =
+  print_endline (String.make 40 '\n');
+  print_endline "Scroll up if you want to see your previous input!";
   print_endline "\n---------------------------------------------------------\n";
-  match
-    Game.is_legal_play
-      (List.nth game.player_hand (int_of_string s))
-      game.discard_pile
-  with
-  | true -> (
-      let new_game_state =
-        Game.play_card (List.nth game.player_hand (int_of_string s)) game true
-      in
-      match Card.get_color new_game_state.discard_pile with
-      | "Wild" ->
-          print_endline "Choose new color for wild card: ";
-          let input = read_line () in
-          transition_before_opp (Game.transform_pile_wild new_game_state input)
-      | _ -> transition_before_opp new_game_state)
-  | false ->
-      print_endline
-        "Card could not be played, please try another card or draw a card.";
-      game
+  try
+    match
+      Game.is_legal_play
+        (List.nth game.player_hand (int_of_string s))
+        game.discard_pile
+    with
+    | true -> (
+        let new_game_state =
+          Game.play_card (List.nth game.player_hand (int_of_string s)) game true
+        in
+        match Card.get_color new_game_state.discard_pile with
+        | "Wild" ->
+            print_endline "Discard Pile: \n";
+            Game.print_card game.discard_pile;
+            print_endline "\n \nHand: \n ";
+            Game.print_player_hand game.player_hand 0;
+            print_endline "\n";
+            print_endline
+              "Choose new color for wild card: (the options are: red, green, \
+               yellow, and blue) ";
+            let input = read_line () in
+            transition_before_opp
+              (Game.transform_pile_wild new_game_state input)
+        | _ -> transition_before_opp new_game_state)
+    | false ->
+        print_endline
+          "Card could not be played, please try another card or draw a card.";
+        game
+  with Failure x ->
+    print_endline ("Could not parse: \"" ^ s ^ "\". please try again:");
+    print_string "> ";
+    play_card (read_line ()) game
 
 (* Matches user input with a shorter string that will be used to process their
    request in the process of the game *)
 let stage_2 x =
   match read_line () with
   | "play card" ->
+      print_endline (String.make 40 '\n');
+      print_endline "Scroll up if you want to see your previous input!";
       print_endline
         "\n---------------------------------------------------------\n";
       "play"
   | "read card" ->
+      print_endline (String.make 40 '\n');
+      print_endline "Scroll up if you want to see your previous input!";
       print_endline
         "\n---------------------------------------------------------\n";
       "read"
-  | "draw card" ->
-      print_endline
-        "\n---------------------------------------------------------\n";
-      "draw"
+  | "draw card" -> "draw"
   | _ ->
+      print_endline (String.make 40 '\n');
+      print_endline "Scroll up if you want to see your previous input!";
       print_endline
         "\n---------------------------------------------------------\n";
       "please enter a valid input"
@@ -150,19 +184,19 @@ let rec game_process z (game : Game.t) =
   | true, 0 -> "\n You Win!"
   | true, _ -> "\n You Lose :("
   | false, _ -> (
-      print_endline "\n  \nGame Status\n";
-      print_endline "    Below is the Discard Pile and your hand! \n";
-      print_endline "        Discard Pile: \n";
+      print_endline "\n----\nGame Status\n";
+      print_endline "Below is the Discard Pile and your hand! \n";
+      print_endline "Discard Pile: \n";
       Game.print_card game.discard_pile;
-      print_endline "\n \n        Hand: \n ";
+      print_endline "\n \nHand: \n ";
       Game.print_player_hand game.player_hand 0;
       print_endline "\n";
-      print_endline "the number of cards in the opponents hand:";
-      print_endline "\n";
-      print_endline ("     " ^ string_of_int (List.length game.enemy_hand));
-      print_endline "\n";
       print_endline
-        "    You have the following input choices:\n\
+        ("the number of cards in the opponents hand:  "
+        ^ string_of_int (List.length game.enemy_hand));
+      print_endline
+        " \n\
+        \   You have the following input choices:\n\
         \      - play card  (to play one of your cards)\n\
         \      - read card  (to read the specific description of one of your \
          cards)";
@@ -170,11 +204,21 @@ let rec game_process z (game : Game.t) =
       print_string "> ";
       match stage_2 () with
       | "play" ->
+          print_endline "Discard Pile: \n";
+          Game.print_card game.discard_pile;
+          print_endline "\n \nHand: \n ";
+          Game.print_player_hand game.player_hand 0;
+          print_endline "\n";
           print_endline
             "please enter a number corresponding to the label of the card";
           print_string "> ";
           game_process () (play_card (read_line ()) game)
       | "read" ->
+          print_endline "Discard Pile: \n";
+          Game.print_card game.discard_pile;
+          print_endline "\n \nHand: \n ";
+          Game.print_player_hand game.player_hand 0;
+          print_endline "\n";
           print_endline
             "please enter a number corresponding to the label of the card";
           print_string "> ";
@@ -200,6 +244,8 @@ let stage_1 x =
   print_string "> ";
   match read_line () with
   | "rules" ->
+      print_endline (String.make 40 '\n');
+      print_endline "Scroll up if you want to see your previous input!";
       print_endline
         "\n---------------------------------------------------------\n";
       "The rules of the game are as followed:\n\
@@ -245,10 +291,14 @@ let stage_1 x =
       \            the discard pile\n\
       \      "
   | "start game" ->
+      print_endline (String.make 40 '\n');
+      print_endline "Scroll up if you want to see your previous input!";
       print_endline
         "\n---------------------------------------------------------\n";
       "I hope you have fun!"
   | _ ->
+      print_endline (String.make 40 '\n');
+      print_endline "Scroll up if you want to see your previous input!";
       print_endline
         "\n---------------------------------------------------------\n";
       "please enter a valid input"
@@ -268,6 +318,8 @@ let rec set_difficulty () =
   print_endline
     "Select number for game difficulty: \n 0. Easy \n 1. Medium \n 2. Hard";
   let diff = read_line () in
+  print_endline (String.make 40 '\n');
+  print_endline "Scroll up if you want to see your previous input!";
   print_endline "\n---------------------------------------------------------\n";
   match String.lowercase_ascii diff with
   | "0" | "easy" ->
