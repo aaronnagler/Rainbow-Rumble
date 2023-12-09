@@ -63,10 +63,10 @@ module type CardType = sig
   (*Returns all number cards given a hand*)
   val filter_number_cards : t list -> t list
 
-  (*Return all cards with special property given a hand*)
+  (*Return all cards with special property (excluding wild) given a hand*)
   val filter_special_cards : t list -> t list
 
-  (*Returns all wild cards given a hand*)
+  (*Returns all wild cards (that is, cards with a "wild" color) given a hand*)
   val filter_wild_cards : t list -> t list
 
   (*Returns the most prevalant color in hand.*)

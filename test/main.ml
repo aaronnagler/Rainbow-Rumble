@@ -78,6 +78,7 @@ let one_of_each_type_cards =
 
 let card_tests =
   [
+    (* get_color tests*)
     ( "get_color regular card" >:: fun _ ->
       assert_equal "Red" (Card.get_color (Card.make_card "Red" "2" "None")) );
     ( "get_color draw 2" >:: fun _ ->
@@ -86,6 +87,7 @@ let card_tests =
     ( "get_color draw 4" >:: fun _ ->
       assert_equal "Wild" (Card.get_color (Card.make_card "Wild" "2" "Draw 4"))
     );
+    (* get number tests*)
     ( "get_number regular card" >:: fun _ ->
       assert_equal "5" (Card.get_number (Card.make_card "Yellow" "5" "None")) );
     ( "get_number draw 2" >:: fun _ ->
@@ -97,6 +99,7 @@ let card_tests =
     ( "get_number wild" >:: fun _ ->
       assert_equal "NaN" (Card.get_number (Card.make_card "Wild" "NaN" "None"))
     );
+    (* get_property_name tests*)
     ( "get_property_name regular card" >:: fun _ ->
       assert_equal "None"
         (Card.get_property_name (Card.make_card "Green" "2" "None")) );
@@ -109,6 +112,7 @@ let card_tests =
     ( "get_property_name wild" >:: fun _ ->
       assert_equal "None"
         (Card.get_property_name (Card.make_card "Wild" "NaN" "None")) );
+    (* get_property description tests*)
     ( "get_property_description regular card" >:: fun _ ->
       assert_equal "None"
         (Card.get_property_name (Card.make_card "Red" "4" "None")) );
@@ -120,6 +124,7 @@ let card_tests =
       assert_equal "Opponent must draw 4 cards from the top of the deck"
         (Card.get_property_description (Card.make_card "Wild" "NaN" "Draw 4"))
     );
+    (* filter_number_cards tests*)
     ( "filter_number_cards single (number) card" >:: fun _ ->
       assert_equal
         [ Card.make_card "Red" "1" "None" ]
@@ -167,66 +172,84 @@ let card_tests =
              Card.make_card "Wild" "NaN" "Draw 4";
            ]) );
     ( "filter_number_cards all numbered cards" >:: fun _ ->
-      assert_equal num_cards (filter_number_cards num_cards) );
+      assert_equal num_cards (Card.filter_number_cards num_cards) );
     ( "filter_number_cards all special cards" >:: fun _ ->
-      assert_equal [] (filter_number_cards special_cards) );
+      assert_equal [] (Card.filter_number_cards special_cards) );
     ( "filter_number_cards all wild cards" >:: fun _ ->
-      assert_equal [] (filter_number_cards wild_cards) );
+      assert_equal [] (Card.filter_number_cards wild_cards) );
     ( "filter_number_cards all cards in deck" >:: fun _ ->
-      assert_equal num_cards (filter_number_cards all_cards) );
+      assert_equal num_cards (Card.filter_number_cards all_cards) );
+    (*filter_special_cards tests*)
     ( "filter_special_cards single wild card" >:: fun _ ->
-      assert_equal [] (filter_special_cards [ make_card "Wild" "NaN" "None" ])
-    );
+      assert_equal []
+        (Card.filter_special_cards [ Card.make_card "Wild" "NaN" "None" ]) );
     ( "filter_special_cards single draw 4 card" >:: fun _ ->
       assert_equal
-        [ make_card "Wild" "NaN" "Draw 4" ]
-        (filter_special_cards [ make_card "Wild" "NaN" "Draw 4" ]) );
+        [ Card.make_card "Wild" "NaN" "Draw 4" ]
+        (Card.filter_special_cards [ Card.make_card "Wild" "NaN" "Draw 4" ]) );
     ( "filter_special_cards single draw 2 card" >:: fun _ ->
       assert_equal
-        [ make_card "Green" "NaN" "Draw 2" ]
-        (filter_special_cards [ make_card "Green" "NaN" "Draw 2" ]) );
+        [ Card.make_card "Green" "NaN" "Draw 2" ]
+        (Card.filter_special_cards [ Card.make_card "Green" "NaN" "Draw 2" ]) );
     ( "filter_special_cards single number card" >:: fun _ ->
-      assert_equal [] (filter_special_cards [ make_card "Green" "0" "None" ]) );
+      assert_equal []
+        (Card.filter_special_cards [ Card.make_card "Green" "0" "None" ]) );
     ( "filter_special_cards empty list" >:: fun _ ->
-      assert_equal [] (filter_special_cards []) );
+      assert_equal [] (Card.filter_special_cards []) );
     ( "filter_special_cards multiple cards, all numbers" >:: fun _ ->
       assert_equal []
-        (filter_number_cards
+        (Card.filter_special_cards
            [
-             make_card "Blue" "2" "None";
-             make_card "Red" "1" "None";
-             make_card "Blue" "2" "None";
+             Card.make_card "Blue" "2" "None";
+             Card.make_card "Red" "1" "None";
+             Card.make_card "Blue" "2" "None";
            ]) );
     ( "filter_special_cards multiple cards, all special" >:: fun _ ->
       assert_equal
         [
-          make_card "Blue" "NaN" "Draw 2";
-          make_card "Wild" "NaN" "Draw 4";
-          make_card "Blue" "2" "Draw 2";
+          Card.make_card "Blue" "NaN" "Draw 2";
+          Card.make_card "Wild" "NaN" "Draw 4";
+          Card.make_card "Blue" "2" "Draw 2";
         ]
-        (filter_number_cards
+        (Card.filter_special_cards
            [
-             make_card "Blue" "NaN" "Draw 2";
-             make_card "Wild" "NaN" "Draw 4";
-             make_card "Blue" "2" "Draw 2";
+             Card.make_card "Blue" "NaN" "Draw 2";
+             Card.make_card "Wild" "NaN" "Draw 4";
+             Card.make_card "Blue" "2" "Draw 2";
            ]) );
     ( "filter_special_cards multiple cards, only numbers and wild" >:: fun _ ->
+      assert_equal []
+        (Card.filter_special_cards
+           [
+             Card.make_card "Red" "4" "None";
+             Card.make_card "Wild" "NaN" "None";
+             Card.make_card "Blue" "2" "None";
+           ]) );
+    ( "filter_special_cards multiple cards, mix of all types" >:: fun _ ->
       assert_equal
         [
-          make_card "Blue" "2" "None";
-          make_card "Wild" "NaN" "Draw 4";
-          make_card "Blue" "2" "Draw 2";
+          Card.make_card "Blue" "NaN" "Draw 2";
+          Card.make_card "Wild" "NaN" "Draw 4";
         ]
-        (filter_number_cards
+        (Card.filter_special_cards
            [
-             make_card "Blue" "NaN" "Draw 2";
-             make_card "Wild" "NaN" "Draw 4";
-             make_card "Blue" "2" "Draw 2";
+             Card.make_card "Red" "4" "None";
+             Card.make_card "Wild" "NaN" "None";
+             Card.make_card "Blue" "NaN" "Draw 2";
+             Card.make_card "Wild" "NaN" "Draw 4";
            ]) );
-    ( "filter_special_cards multiple cards, mix of all three" >:: fun _ ->
+    ( "filter_special_cards all possible number cards" >:: fun _ ->
+      assert_equal [] (Card.filter_special_cards num_cards) );
+    ( "filter_special_cards all possible special cards" >:: fun _ ->
+      assert_equal special_cards (Card.filter_special_cards special_cards) );
+    ( "filter_special_cards all possible wild cards" >:: fun _ ->
       assert_equal
-        [ Card.make_card "Red" "NaN" "Draw2" ]
-        (filter_special_cards one_of_each_type_cards) );
+        [ Card.make_card "Wild" "NaN" "Draw 4" ]
+        (Card.filter_special_cards wild_cards) );
+    ( "filter_special_cards entire deck" >:: fun _ ->
+      assert_equal
+        (special_cards @ [ Card.make_card "Wild" "NaN" "Draw 4" ])
+        (Card.filter_special_cards all_cards) );
   ]
 
 let game_tests =
