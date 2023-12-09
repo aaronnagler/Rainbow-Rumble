@@ -7,4 +7,5 @@ module AI : sig
   val strategy_3 : Card.t list -> Card.t option
   val hard_mode_turn : Card.t list -> Card.t -> int -> Card.t option
   val enemy_turn : Card.t list -> string -> Card.t -> int -> Card.t option
+  val enemy_voiceline : Card.t list -> string -> string option
 end
