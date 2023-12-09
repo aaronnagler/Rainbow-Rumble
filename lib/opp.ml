@@ -86,7 +86,7 @@ module AI = struct
       | _ -> hard_mode_turn enemy_hand discard_pile player_hand_num
 
   let winning_bark : string =
-    match Random.int 5 with
+    match Random.int 17 with
     | 0 -> "Uno!"
     | 1 -> "Ha, I'm about to win!"
     | 2 -> "It's Joever!"
@@ -96,6 +96,18 @@ module AI = struct
     | 6 -> "Thx for the easy win!"
     | 7 -> "Can't believe I'm gonna win!"
     | 8 -> "I swear on OCaml that One Piece gets good when you get to Ocean 6!"
+    | 10 -> "I won and I wasn't even plugged in!"
+    | 11 -> "Sorry my lowest power level was too high for you!"
+    | 12 ->
+        "I always wondered what it would be like to play Uno solitare, the way \
+         you gave provided me with nonexistent competition!"
+    | 13 -> "Your playstyle reminds me of my toddler days! Hah!"
+    | 14 ->
+        "Sorry this game is too difficult for you, would 52 pickup be more \
+         your speed?"
+    | 15 -> "I hope you enjoyed all my draw 4 cards :)!"
+    | 16 -> "Your skill level is the UNO reverse of mastery!"
+    | 17 -> "That game didn't even make me break a sweat!"
     | _ -> "Heheheha!"
 
   let uno_voiceline (last_card : Card.t) (difficulty : string) : string =
