@@ -50,11 +50,14 @@ module Game = struct
     let ld = Card.get_property_description card in
     match (c, n, p, ld) with
     | "Wild", _, "Draw 4", d ->
-        print_string ("Card: " ^ "Wild, " ^ "Draw 4, " ^ "description: " ^ d)
-    | "Wild", _, "None", _ -> print_string ("Card: " ^ "wild, " ^ "Wild")
+        print_string ("Card: Wild; Property: Draw 4; description: " ^ d)
+    | "Wild", _, "None", _ ->
+        print_string "Card: Wild; Property: none; Description: none"
     | color, _, "Draw 2", d ->
-        print_string (color ^ (color ^ " Draw 2") ^ "description: " ^ d)
-    | color, numb, _, _ -> print_string ("Card: " ^ color ^ color ^ " " ^ numb)
+        print_string ("Card: " ^ color ^ "Property: Draw 2; Description: " ^ d)
+    | color, numb, _, _ ->
+        print_string
+          ("Card: " ^ color ^ " " ^ numb ^ "; Property: none; Description: none")
 
   (* Prints the effect of a card, if it has one, otherwise prints "none" *)
   let print_desc (card : Card.t) : unit =
