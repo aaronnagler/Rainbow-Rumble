@@ -15,7 +15,7 @@ type numb =
   | Six
   | Seven
   | Eight
-  | Nine 
+  | Nine
   | NaN
 
 (* tuple (name, description) where name is the name of the property and
@@ -152,25 +152,25 @@ module Card : CardType = struct
 
   (* Given a string [numb], returns the associated number. *)
   let make_numb (numb : string) =
-    match numb with
-    | "0" -> Zero
-    | "1" -> One
-    | "2" -> Two
-    | "3" -> Three
-    | "4" -> Four
-    | "5" -> Five
-    | "6" -> Six
-    | "7" -> Seven
-    | "8" -> Eight
-    | "9" -> Nine
-    | "NaN" -> NaN
+    match String.lowercase_ascii numb with
+    | "0" | "zero" -> Zero
+    | "1" | "one" -> One
+    | "2" | "two" -> Two
+    | "3" | "three" -> Three
+    | "4" | "four" -> Four
+    | "5" | "five" -> Five
+    | "6" | "six" -> Six
+    | "7" | "seven" -> Seven
+    | "8" | "eight" -> Eight
+    | "9" | "nine" -> Nine
+    | "nan" -> NaN
     | _ -> failwith "Not a valid numb"
 
   let make_prop (prop : string) =
-    match prop with
-    | "None" -> None
-    | "Draw 2" -> Some Draw2
-    | "Draw 4" -> Some Draw4
+    match String.lowercase_ascii prop with
+    | "none" -> None
+    | "draw 2" | "draw2" -> Some Draw2
+    | "draw 4" | "draw4" -> Some Draw4
     | _ -> failwith "Not a valid prop"
 
   let make_card (color : string) (numb : string) (prop : string) : t =

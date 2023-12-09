@@ -55,16 +55,15 @@ let num_cards =
 (*All Special Cards*)
 let special_cards =
   [
-    Card.make_card "Red" "NaN" "Draw2";
-    Card.make_card "Blue" "NaN" "Draw2";
-    Card.make_card "Green" "NaN" "Draw2";
-    Card.make_card "Yellow" "NaN" "Draw2";
-    Card.make_card "Wild" "NaN" "Draw2";
+    Card.make_card "Red" "NaN" "Draw 2";
+    Card.make_card "Blue" "NaN" "Draw 2";
+    Card.make_card "Green" "NaN" "Draw 2";
+    Card.make_card "Yellow" "NaN" "Draw 2";
   ]
 
 (*All Wild Cards*)
 let wild_cards =
-  [ Card.make_card "Wild" "NaN" "Draw2"; Card.make_card "Wild" "NaN" "Draw4" ]
+  [ Card.make_card "Wild" "NaN" "None"; Card.make_card "Wild" "NaN" "Draw 4" ]
 
 (*Full All Cards*)
 let all_cards = num_cards @ special_cards @ wild_cards
@@ -72,9 +71,9 @@ let all_cards = num_cards @ special_cards @ wild_cards
 (*One type of card from each category*)
 let one_of_each_type_cards =
   [
-    Card.make_card "Red" "Zero" "NaN";
+    Card.make_card "Red" "Zero" "None";
     Card.make_card "Red" "NaN" "Draw2";
-    Card.make_card "Wild" "NaN" "NaN";
+    Card.make_card "Wild" "NaN" "None";
   ]
 
 let card_tests =
@@ -156,6 +155,67 @@ let card_tests =
              make_card "Blue" "3" "None";
              make_card "Wild" "NaN" "Draw 4";
            ]) );
+    ( "filter_number_cards all numbered cards" >:: fun _ ->
+      assert_equal num_cards (filter_number_cards num_cards) );
+    ( "filter_number_cards all special cards" >:: fun _ ->
+      assert_equal [] (filter_number_cards special_cards) );
+    ( "filter_number_cards all wild cards" >:: fun _ ->
+      assert_equal [] (filter_number_cards wild_cards) );
+    ( "filter_number_cards all cards in deck" >:: fun _ ->
+      assert_equal num_cards (filter_number_cards all_cards) );
+    ( "filter_special_cards single wild card" >:: fun _ ->
+      assert_equal [] (filter_special_cards [ make_card "Wild" "NaN" "None" ])
+    );
+    ( "filter_special_cards single draw 4 card" >:: fun _ ->
+      assert_equal
+        [ make_card "Wild" "NaN" "Draw 4" ]
+        (filter_special_cards [ make_card "Wild" "NaN" "Draw 4" ]) );
+    ( "filter_special_cards single draw 2 card" >:: fun _ ->
+      assert_equal
+        [ make_card "Green" "NaN" "Draw 2" ]
+        (filter_special_cards [ make_card "Green" "NaN" "Draw 2" ]) );
+    ( "filter_special_cards single number card" >:: fun _ ->
+      assert_equal [] (filter_special_cards [ make_card "Green" "0" "None" ]) );
+    ( "filter_special_cards empty list" >:: fun _ ->
+      assert_equal [] (filter_special_cards []) );
+    ( "filter_special_cards multiple cards, all numbers" >:: fun _ ->
+      assert_equal []
+        (filter_number_cards
+           [
+             make_card "Blue" "2" "None";
+             make_card "Red" "1" "None";
+             make_card "Blue" "2" "None";
+           ]) );
+    ( "filter_special_cards multiple cards, all special" >:: fun _ ->
+      assert_equal
+        [
+          make_card "Blue" "NaN" "Draw 2";
+          make_card "Wild" "NaN" "Draw 4";
+          make_card "Blue" "2" "Draw 2";
+        ]
+        (filter_number_cards
+           [
+             make_card "Blue" "NaN" "Draw 2";
+             make_card "Wild" "NaN" "Draw 4";
+             make_card "Blue" "2" "Draw 2";
+           ]) );
+    ( "filter_special_cards multiple cards, only numbers and wild" >:: fun _ ->
+      assert_equal
+        [
+          make_card "Blue" "2" "None";
+          make_card "Wild" "NaN" "Draw 4";
+          make_card "Blue" "2" "Draw 2";
+        ]
+        (filter_number_cards
+           [
+             make_card "Blue" "NaN" "Draw 2";
+             make_card "Wild" "NaN" "Draw 4";
+             make_card "Blue" "2" "Draw 2";
+           ]) );
+    ( "filter_special_cards multiple cards, mix of all three" >:: fun _ ->
+      assert_equal
+        [ Card.make_card "Red" "NaN" "Draw2" ]
+        (filter_special_cards one_of_each_type_cards) );
   ]
 
 let game_tests =
@@ -344,7 +404,5 @@ let opp_tests =
         (AI.hard_mode_turn all_cards (Card.make_card "Red" "Zero" "NaN") 3) );
   ]
 
-let suite =
-  "test suite for cards" >::: List.flatten [ card_tests; game_tests; opp_tests ]
-
+let suite = "test suite for cards" >::: List.flatten [ card_tests; game_tests ]
 let () = run_test_tt_main suite
