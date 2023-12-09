@@ -52,7 +52,7 @@ let num_cards =
     Card.make_card "Yellow" "Nine" "None";
   ]
 
-(*All Special Cards*)
+(*All Special Cards, excluding Draw 4*)
 let special_cards =
   [
     Card.make_card "Red" "NaN" "Draw 2";
@@ -250,6 +250,51 @@ let card_tests =
       assert_equal
         (special_cards @ [ Card.make_card "Wild" "NaN" "Draw 4" ])
         (Card.filter_special_cards all_cards) );
+    (* filter_wild_cards tests*)
+    ( "filter_wild_cards single wild card" >:: fun _ ->
+      assert_equal
+        [ Card.make_card "Wild" "NaN" "None" ]
+        (Card.filter_wild_cards [ Card.make_card "Wild" "NaN" "None" ]) );
+    ( "filter_wild_cards single number card" >:: fun _ ->
+      assert_equal []
+        (Card.filter_wild_cards [ Card.make_card "Red" "6" "None" ]) );
+    ( "filter_wild_cards single draw 2 card" >:: fun _ ->
+      assert_equal []
+        (Card.filter_wild_cards [ Card.make_card "Green" "NaN" "Draw 2" ]) );
+    ( "filter_wild_cards single draw 4 card" >:: fun _ ->
+      assert_equal
+        [ Card.make_card "Wild" "NaN" "Draw 4" ]
+        (Card.filter_wild_cards [ Card.make_card "Wild" "NaN" "Draw 4" ]) );
+    ( "filter_wild_cards empty list" >:: fun _ ->
+      assert_equal [] (Card.filter_wild_cards []) );
+    ( "filter_wild_cards multiple cards, all numbers" >:: fun _ ->
+      assert_equal []
+        (Card.filter_wild_cards
+           [
+             Card.make_card "Blue" "2" "None";
+             Card.make_card "Red" "1" "None";
+             Card.make_card "Blue" "2" "None";
+           ]) );
+    ( "filter_wild_cards multiple cards, all special" >:: fun _ ->
+      assert_equal
+        [ Card.make_card "Wild" "NaN" "Draw 4" ]
+        (Card.filter_wild_cards
+           [
+             Card.make_card "Blue" "NaN" "Draw 2";
+             Card.make_card "Wild" "NaN" "Draw 4";
+             Card.make_card "Red" "NaN" "Draw 2";
+           ]) );
+    ( "filter_wild_cards all wild cards" >:: fun _ ->
+      assert_equal wild_cards (Card.filter_wild_cards wild_cards) );
+    ( "filter_wild_cards all number cards" >:: fun _ ->
+      assert_equal [] (Card.filter_wild_cards num_cards) );
+    ( "filter_wild_cards all special cards" >:: fun _ ->
+      assert_equal
+        [ Card.make_card "Wild" "NaN" "Draw 4" ]
+        (Card.filter_wild_cards
+           (Card.make_card "Wild" "NaN" "Draw 4" :: special_cards)) );
+    ( "filter_wild_cards entire deck" >:: fun _ ->
+      assert_equal wild_cards (Card.filter_wild_cards all_cards) );
   ]
 
 let game_tests =
@@ -438,5 +483,7 @@ let opp_tests =
         (AI.hard_mode_turn all_cards (Card.make_card "Red" "Zero" "NaN") 3) );
   ]
 
-let suite = "test suite for cards" >::: List.flatten [ card_tests; game_tests ]
+let suite =
+  "test suite for cards" >::: List.flatten [ card_tests; game_tests; opp_tests ]
+
 let () = run_test_tt_main suite
