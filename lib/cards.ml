@@ -69,7 +69,7 @@ module type CardType = sig
   (*Returns all wild cards given a hand*)
   val filter_wild_cards : t list -> t list
 
-  (*Returns the most prevelant color in hand.*)
+  (*Returns the most prevalant color in hand.*)
   val most_common_color : t list -> color
 end
 

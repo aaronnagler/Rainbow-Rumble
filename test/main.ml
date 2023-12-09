@@ -105,6 +105,51 @@ let card_tests =
     ( "get_property_description draw 4" >:: fun _ ->
       assert_equal "Opponent must draw 4 cards from the top of the deck"
         (get_property_description (make_card "Wild" "NaN" "Draw 4")) );
+    ( "filter_number_cards single (number) card" >:: fun _ ->
+      assert_equal
+        [ make_card "Red" "1" "None" ]
+        (filter_number_cards [ make_card "Red" "1" "None" ]) );
+    ( "filter_number_cards single wild card" >:: fun _ ->
+      assert_equal [] (filter_number_cards [ make_card "Wild" "NaN" "None" ]) );
+    ( "filter_number_cards single draw 4 card" >:: fun _ ->
+      assert_equal [] (filter_number_cards [ make_card "Wild" "NaN" "Draw 4" ])
+    );
+    ( "filter_number_cards single draw 2 card" >:: fun _ ->
+      assert_equal [] (filter_number_cards [ make_card "Blue" "NaN" "Draw 2" ])
+    );
+    ( "filter_number_cards empty list" >:: fun _ ->
+      assert_equal [] (filter_number_cards []) );
+    ( "filter_number_cards multiple cards, but no numbers" >:: fun _ ->
+      assert_equal []
+        (filter_number_cards
+           [
+             make_card "Blue" "NaN" "Draw 2";
+             make_card "Wild" "NaN" "Draw 4";
+             make_card "Wild" "NaN" "None";
+           ]) );
+    ( "filter_number_cards multiple cards, all numbers" >:: fun _ ->
+      assert_equal
+        [
+          make_card "Blue" "2" "None";
+          make_card "Red" "1" "None";
+          make_card "Blue" "2" "None";
+        ]
+        (filter_number_cards
+           [
+             make_card "Blue" "2" "None";
+             make_card "Red" "1" "None";
+             make_card "Blue" "2" "None";
+           ]) );
+    ( "filter_number_cards mix of number cards, non-number cards" >:: fun _ ->
+      assert_equal
+        [ make_card "Blue" "2" "None"; make_card "Blue" "3" "None" ]
+        (filter_number_cards
+           [
+             make_card "Blue" "2" "None";
+             make_card "Green" "NaN" "Draw 2";
+             make_card "Blue" "3" "None";
+             make_card "Wild" "NaN" "Draw 4";
+           ]) );
   ]
 
 let game_tests =
@@ -184,7 +229,7 @@ let game_tests =
       assert_equal true
         (Game.is_legal_play
            (make_card "Wild" "NaN" "None")
-           (make_card "Yellow" "Wild" "None")) );
+           (make_card "Wild" "NaN" "None")) );
   ]
 
 let opp_tests =
