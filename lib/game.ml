@@ -250,4 +250,7 @@ module Game = struct
     | 0, _ -> (true, 0)
     | _, 0 -> (true, 1)
     | _, _ -> (false, 2)
+
+  let check_voiceline (game : t) : string option =
+    AI.enemy_voiceline game.enemy_hand game.difficulty
 end

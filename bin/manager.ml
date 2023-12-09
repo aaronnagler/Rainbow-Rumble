@@ -75,6 +75,9 @@ let opps_turn (game : Game.t) : Game.t =
       print_endline "They played the following: \n";
       Game.print_long x;
       let new_game_state = Game.play_card x game false in
+      (match Game.check_voiceline new_game_state with
+      | None -> ()
+      | Some x -> print_endline (x ^ "\n"));
       match Card.get_color new_game_state.discard_pile with
       | "Wild" ->
           print_endline "\n";

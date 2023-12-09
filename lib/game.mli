@@ -34,4 +34,5 @@ module Game : sig
   val enemy_turn : t -> Card.t option
   val most_common_color : Card.t list -> string
   val check_winner : t -> bool * int
+  val check_voiceline : t -> string option
 end
