@@ -32,7 +32,7 @@ module AI : sig
      succesful, return the card it will play from its hand. Otherwise return
      None, meaning the enemy has no cards to play from its hand *)
 
-  val winning_bark : unit -> string
+  val winning_bark : string
   (**Returns a random taunt for the opponent AI to say.*)
 
   val uno_voiceline : Card.t -> string -> string
