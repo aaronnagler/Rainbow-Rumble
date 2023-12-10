@@ -4,6 +4,24 @@ open Cards
 open Opp
 
 (*All Number Cards*)
+(* Test Plan:
+
+   TODO ** OTHER PARTS OF THE TEST PLAN ARE CURRENTLY INCOMPLETE** TODO
+
+   Correctness of the system: Overall, since our program is a game which has its
+   main function being creating a good experince for the user, a good
+   perspective to analyze wether we acheive correctness in our program is to
+   ensure that every command that the user makes results in a behavior that the
+   user expects. A large part of ensuring this correctness was through our
+   constant and frequent manual tests of the system through the REPL. This
+   allowed us to test certain overall branches of sequences of choices that the
+   user could make would result in the program behaving as expected. However,
+   since we cannot possibly make every possible decision that the user can make
+   through manual testing, our OUnit tests also contirbute to the correctness by
+   testing the foundational functions which are used throughout the game,
+   providing more confidence in the correctness of the overall program and its
+   ability to respond properly to any input that the user may make, to create
+   for the ideal experience. *)
 let num_cards =
   [
     (*Red*)
