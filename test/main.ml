@@ -19,25 +19,29 @@ open Opp
     do.
 
     For similar reasons as above, we also used OUnit tests for most of the AI
-    module (easy_mode_turn, strategy_1, strategy_2, strategy_3, hard_mode_turn).
+    module (easy_mode_turn, strategy_1, strategy_2, strategy_3, hard_mode_turn)
+    and parts of the Game module (transform_pile_wild, remove_card,
+    check_winner).
 
     Manual testing was done by running the program to ensure certain scenarios
     would lead to the correct outcomes. We had to do manual testing for
     functions whose purpose it was to print out objects of the game
-    (print_colored_text, print_card, print_player_hand, print_both_hands in the
-    Game module). We would do this just by running the game, and if necessary
-    (depending on the function), exploring corner cases that might change the
-    output of that particular print function.
+    (print_colored_text, print_card, print_player_hand, print_both_hands,
+    print_long, print_description in the Game module). We would do this just by
+    running the game, and if necessary (depending on the function), exploring
+    corner cases that might change the output of that particular print function.
 
     We also had to test manually for functionality that is supposed to have
     random output. This includes functions in the AI module (enemy_turn,
-    uno_voiceline, enemy_voiceline) and the Game module (draw, draw_valid_card).
-    For these functions, we just observed their functionality in the REPL and
-    made sure it was what we expected. For example, with draw, we listed out in
-    a document what cards should be possible to draw, and we repeatedly drew
-    from the deck to make sure we were getting the expected cards.
-
-    TODO ** OTHER PARTS OF THE TEST PLAN ARE CURRENTLY INCOMPLETE** TODO
+    winning_bark, uno_voiceline, enemy_voiceline) and the Game module (draw,
+    draw_valid_card). For these functions, we just observed their functionality
+    in the REPL and made sure it was what we expected. For example, with draw,
+    we listed out in a document what cards should be possible to draw, and we
+    repeatedly drew from the deck to make sure we were getting the expected
+    cards. However, it's important to note that, because of the sheer amount of
+    possibilities for some of these functions and because of the random nature
+    of others, our manual tests (testing through playing the game) couldn't be
+    as comprehensive as our OUnit test cases.
 
     Correctness of the system: Overall, since our program is a game which has
     its main function being creating a good experince for the user, a good
