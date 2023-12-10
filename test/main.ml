@@ -358,6 +358,125 @@ let card_tests =
            (Card.make_card "Wild" "NaN" "Draw 4" :: special_cards)) );
     ( "filter_wild_cards entire deck" >:: fun _ ->
       assert_equal wild_cards (Card.filter_wild_cards all_cards) );
+    (* most_common_color tests*)
+    ( "most_common_color empty list " >:: fun _ ->
+      assert_equal Red (Card.most_common_color []) );
+    ( "most_common_color single green " >:: fun _ ->
+      assert_equal Green
+        (Card.most_common_color [ Card.make_card "Green" "5" "None" ]) );
+    ( "most_common_color single blue " >:: fun _ ->
+      assert_equal Blue
+        (Card.most_common_color [ Card.make_card "Blue" "5" "None" ]) );
+    ( "most_common_color single red " >:: fun _ ->
+      assert_equal Red
+        (Card.most_common_color [ Card.make_card "Red" "5" "None" ]) );
+    ( "most_common_color single yellow " >:: fun _ ->
+      assert_equal Yellow
+        (Card.most_common_color [ Card.make_card "Yellow" "5" "None" ]) );
+    ( "most_common_color green" >:: fun _ ->
+      assert_equal Green
+        (Card.most_common_color
+           [
+             Card.make_card "Green" "0" "None";
+             Card.make_card "Yellow" "5" "None";
+             Card.make_card "Green" "2" "None";
+           ]) );
+    ( "most_common_color blue" >:: fun _ ->
+      assert_equal Blue
+        (Card.most_common_color
+           [
+             Card.make_card "Blue" "0" "None";
+             Card.make_card "Blue" "5" "None";
+             Card.make_card "Yellow" "5" "None";
+             Card.make_card "Wild" "NaN" "None";
+           ]) );
+    ( "most_common_color red" >:: fun _ ->
+      assert_equal Red
+        (Card.most_common_color
+           [
+             Card.make_card "Blue" "0" "None";
+             Card.make_card "Red" "5" "None";
+             Card.make_card "Red" "5" "None";
+             Card.make_card "Wild" "NaN" "Draw 4";
+           ]) );
+    ( "most_common_color yellow" >:: fun _ ->
+      assert_equal Yellow
+        (Card.most_common_color
+           [
+             Card.make_card "Yellow" "0" "None";
+             Card.make_card "Yellow" "5" "None";
+             Card.make_card "Yellow" "5" "None";
+             Card.make_card "Yellow" "NaN" "Draw 2";
+           ]) );
+    ( "most_common_color red-blue tie" >:: fun _ ->
+      assert_equal Red
+        (Card.most_common_color
+           [
+             Card.make_card "Blue" "0" "None";
+             Card.make_card "Red" "1" "None";
+             Card.make_card "Blue" "2" "None";
+             Card.make_card "Red" "NaN" "Draw 2";
+           ]) );
+    ( "most_common_color red-green tie" >:: fun _ ->
+      assert_equal Red
+        (Card.most_common_color
+           [
+             Card.make_card "Green" "0" "None"; Card.make_card "Red" "1" "None";
+           ]) );
+    ( "most_common_color red-green tie" >:: fun _ ->
+      assert_equal Red
+        (Card.most_common_color
+           [
+             Card.make_card "Green" "0" "None"; Card.make_card "Red" "1" "None";
+           ]) );
+    ( "most_common_color red-yellow tie" >:: fun _ ->
+      assert_equal Red
+        (Card.most_common_color
+           [
+             Card.make_card "Red" "0" "None"; Card.make_card "Yellow" "1" "None";
+           ]) );
+    ( "most_common_color blue-green tie" >:: fun _ ->
+      assert_equal Blue
+        (Card.most_common_color
+           [
+             Card.make_card "Blue" "0" "Draw 2";
+             Card.make_card "Green" "1" "None";
+           ]) );
+    ( "most_common_color blue-yellow tie" >:: fun _ ->
+      assert_equal Blue
+        (Card.most_common_color
+           [
+             Card.make_card "Yellow" "0" "Draw 2";
+             Card.make_card "Yellow" "0" "Draw 2";
+             Card.make_card "Blue" "1" "Draw 2";
+             Card.make_card "Blue" "1" "Draw 2";
+           ]) );
+    ( "most_common_color green-yellow tie" >:: fun _ ->
+      assert_equal Green
+        (Card.most_common_color
+           [
+             Card.make_card "Yellow" "NaN" "Draw 2";
+             Card.make_card "Wild" "NaN" "Draw 4";
+             Card.make_card "Green" "0" "None";
+           ]) );
+    ( "most_common_color four-way tie" >:: fun _ ->
+      assert_equal Red
+        (Card.most_common_color
+           [
+             Card.make_card "Red" "5" "None";
+             Card.make_card "Yellow" "0" "Draw 2";
+             Card.make_card "Wild" "NaN" "Draw 4";
+             Card.make_card "Green" "6" "None";
+             Card.make_card "Blue" "6" "None";
+           ]) );
+    ( "most_common_color all wilds" >:: fun _ ->
+      assert_equal Red
+        (Card.most_common_color
+           [
+             Card.make_card "Wild" "NaN" "Draw 4";
+             Card.make_card "Wild" "NaN" "None";
+             Card.make_card "Wild" "NaN" "Draw 4";
+           ]) );
   ]
 
 (**Tests for the functions in the Game module *)

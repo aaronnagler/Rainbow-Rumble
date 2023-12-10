@@ -76,7 +76,9 @@ module type CardType = sig
   (**Returns all wild cards (that is, cards with a "wild" color) given a hand*)
 
   val most_common_color : t list -> color
-  (**Returns the most prevalant color in hand.*)
+  (**Returns the color with the most occurences in the cards of the hand. In the
+     result of ties between colors (including the absence of any color cards),
+     the preference will be Red, Blue, Green, then Yellow.*)
 end
 
 (* A module representing a card of a certain type. *)

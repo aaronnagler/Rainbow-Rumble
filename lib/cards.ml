@@ -179,11 +179,19 @@ module Card : CardType = struct
       | [] -> ()
       | h :: t -> (
           match h.color with
-          | Red -> acc.(0) <- acc.(0) + 1
-          | Blue -> acc.(1) <- acc.(1) + 1
-          | Green -> acc.(2) <- acc.(2) + 1
-          | Yellow -> acc.(3) <- acc.(3) + 1
-          | Wild -> ())
+          | Red ->
+              acc.(0) <- acc.(0) + 1;
+              increment_color acc t
+          | Blue ->
+              acc.(1) <- acc.(1) + 1;
+              increment_color acc t
+          | Green ->
+              acc.(2) <- acc.(2) + 1;
+              increment_color acc t
+          | Yellow ->
+              acc.(3) <- acc.(3) + 1;
+              increment_color acc t
+          | Wild -> increment_color acc t)
     in
     let acc = [| 0; 0; 0; 0 |] in
     increment_color acc hand;
