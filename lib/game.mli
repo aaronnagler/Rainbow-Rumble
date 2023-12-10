@@ -92,4 +92,5 @@ module Game : sig
      opponent winds, and (false, 2) if there is no current winner. *)
 
   val check_voiceline : t -> string option
+  (**Returns some voiceline depending on the enemy's hand and difficulty.*)
 end
