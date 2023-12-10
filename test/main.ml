@@ -3,25 +3,46 @@ open Game
 open Cards
 open Opp
 
-(*All Number Cards*)
-(* Test Plan:
+(** Test Plan: Since all of the functions of the Card module had inputs and
+    outputs like strings, cards, and card lists, we automatically tested these
+    functions (with OUnit) in the test suite below. To ensure that these
+    functions work across the entire range of the playable deck, we created
+    helper lists for the test suite (num_cards, special_cards, wild_cards,
+    all_cards) that represented all of the different types of possible cards.
+    This way, we could easily test functions on the entire deck. Test cases were
+    predominantly designed using black-box testing, looking at the specification
+    for a function and creating test cases based of that information alone. The
+    primary reason we did this was to prevent partiality to test cases that
+    would pass the implementation. Black-box testing was also helpful because it
+    didn't require us to read and understand other team members'
+    implementations; we could just test it by what the function is supposed to
+    do.
 
-   TODO ** OTHER PARTS OF THE TEST PLAN ARE CURRENTLY INCOMPLETE** TODO
+    Manual testing was done by running the program to ensure certain scenarios
+    would lead to the correct outcomes. We had to do manual testing for
+    functions whose purpose it was to print out objects of the game. We would do
+    this just by running the game, and if necessary (depending on the function),
+    exploring corner cases that might change the output of that particular print
+    function.
 
-   Correctness of the system: Overall, since our program is a game which has its
-   main function being creating a good experince for the user, a good
-   perspective to analyze wether we acheive correctness in our program is to
-   ensure that every command that the user makes results in a behavior that the
-   user expects. A large part of ensuring this correctness was through our
-   constant and frequent manual tests of the system through the REPL. This
-   allowed us to test certain overall branches of sequences of choices that the
-   user could make would result in the program behaving as expected. However,
-   since we cannot possibly make every possible decision that the user can make
-   through manual testing, our OUnit tests also contirbute to the correctness by
-   testing the foundational functions which are used throughout the game,
-   providing more confidence in the correctness of the overall program and its
-   ability to respond properly to any input that the user may make, to create
-   for the ideal experience. *)
+    TODO ** OTHER PARTS OF THE TEST PLAN ARE CURRENTLY INCOMPLETE** TODO
+
+    Correctness of the system: Overall, since our program is a game which has
+    its main function being creating a good experince for the user, a good
+    perspective to analyze wether we acheive correctness in our program is to
+    ensure that every command that the user makes results in a behavior that the
+    user expects. A large part of ensuring this correctness was through our
+    constant and frequent manual tests of the system through the REPL. This
+    allowed us to test certain overall branches of sequences of choices that the
+    user could make would result in the program behaving as expected. However,
+    since we cannot possibly make every possible decision that the user can make
+    through manual testing, our OUnit tests also contirbute to the correctness
+    by testing the foundational functions which are used throughout the game,
+    providing more confidence in the correctness of the overall program and its
+    ability to respond properly to any input that the user may make, to create
+    for the ideal experience. *)
+
+(**All Number Cards*)
 let num_cards =
   [
     (*Red*)
@@ -70,7 +91,7 @@ let num_cards =
     Card.make_card "Yellow" "Nine" "None";
   ]
 
-(*All Special Cards, excluding Draw 4*)
+(**All Special Cards, excluding Draw 4*)
 let special_cards =
   [
     Card.make_card "Red" "NaN" "Draw 2";
@@ -79,14 +100,14 @@ let special_cards =
     Card.make_card "Yellow" "NaN" "Draw 2";
   ]
 
-(*All Wild Cards*)
+(**All Wild Cards*)
 let wild_cards =
   [ Card.make_card "Wild" "NaN" "None"; Card.make_card "Wild" "NaN" "Draw 4" ]
 
-(*Full All Cards*)
+(**Full All Cards*)
 let all_cards = num_cards @ special_cards @ wild_cards
 
-(*One type of card from each category*)
+(**One type of card from each category*)
 let one_of_each_type_cards =
   [
     Card.make_card "Red" "Zero" "None";
@@ -94,7 +115,7 @@ let one_of_each_type_cards =
     Card.make_card "Wild" "NaN" "None";
   ]
 
-(* tests for functions in the Card module*)
+(** tests for functions in the Card module*)
 let card_tests =
   [
     (* get_color tests*)
@@ -339,7 +360,7 @@ let card_tests =
       assert_equal wild_cards (Card.filter_wild_cards all_cards) );
   ]
 
-(* tests for the functions in the Game module *)
+(**Tests for the functions in the Game module *)
 let game_tests =
   [
     (*is_legal_play tests*)
@@ -480,7 +501,7 @@ let game_tests =
            (Card.make_card "Yellow" "4" "None")) );
   ]
 
-(* tests for functions in the AI module *)
+(**Tests for functions in the AI module *)
 let opp_tests =
   [
     (*strategy 1*)
@@ -587,7 +608,7 @@ let opp_tests =
         (AI.hard_mode_turn all_cards (Card.make_card "Red" "Zero" "None") 3) );
   ]
 
-(* test suite for all of the modules *)
+(**Test suite for all of the modules *)
 let suite =
   "test suite for cards" >::: List.flatten [ card_tests; game_tests; opp_tests ]
 
