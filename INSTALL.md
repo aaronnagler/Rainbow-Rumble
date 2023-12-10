@@ -7,7 +7,7 @@
 
 ## Build Instructions
 
-1. In you favorite command-line interface, navigate to the project directory.
+1. In your favorite command-line interface, navigate to the project directory.
 2. Run 'make build'
 
 ## Game Boot Instructions
