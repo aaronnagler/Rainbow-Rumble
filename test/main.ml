@@ -94,6 +94,7 @@ let one_of_each_type_cards =
     Card.make_card "Wild" "NaN" "None";
   ]
 
+(* tests for functions in the Card module*)
 let card_tests =
   [
     (* get_color tests*)
@@ -338,6 +339,7 @@ let card_tests =
       assert_equal wild_cards (Card.filter_wild_cards all_cards) );
   ]
 
+(* tests for the functions in the Game module *)
 let game_tests =
   [
     (*is_legal_play tests*)
@@ -478,6 +480,7 @@ let game_tests =
            (Card.make_card "Yellow" "4" "None")) );
   ]
 
+(* tests for functions in the AI module *)
 let opp_tests =
   [
     (*strategy 1*)
@@ -584,6 +587,7 @@ let opp_tests =
         (AI.hard_mode_turn all_cards (Card.make_card "Red" "Zero" "None") 3) );
   ]
 
+(* test suite for all of the modules *)
 let suite =
   "test suite for cards" >::: List.flatten [ card_tests; game_tests; opp_tests ]
 

@@ -11,7 +11,7 @@ module Game = struct
     discard_pile : Card.t;
   }
 
-  let rec print_colored_text color s : unit =
+  let rec print_colored_text (color : string) (s : string) : unit =
     let c =
       match String.lowercase_ascii color with
       | "red" -> "\027[31m"
@@ -25,8 +25,6 @@ module Game = struct
     let reset = "\027[0m" in
     print_string (c ^ s ^ reset)
 
-  (* Prints the color, number, and property of [card] where applicable. Example
-     outputs: "[Red 1]", "[Yellow Draw 2]", "[Blue Draw 4]", "[Wild]"*)
   let print_card (card : Card.t) : unit =
     let c = Card.get_color card in
     let n = Card.get_number card in
@@ -42,8 +40,6 @@ module Game = struct
     | color, _, "Draw 2" -> print_bracket color (color ^ " Draw 2")
     | color, numb, _ -> print_bracket color (color ^ " " ^ numb)
 
-  (* Prints a long form description of the card, including the effects of a wild
-     card if it is appicable *)
   let print_long (card : Card.t) : unit =
     let c = Card.get_color card in
     let n = Card.get_number card in
@@ -60,11 +56,9 @@ module Game = struct
         print_string
           ("Card: " ^ color ^ " " ^ numb ^ "; Property: none; Description: none")
 
-  (* Prints the effect of a card, if it has one, otherwise prints "none" *)
   let print_desc (card : Card.t) : unit =
     print_string (Card.get_property_description card)
 
-  (* Prints the player's hand. *)
   let rec print_player_hand (hand : Card.t list) (acc : int) : unit =
     match hand with
     | [] -> ()
@@ -75,14 +69,12 @@ module Game = struct
         print_card h;
         print_player_hand t (acc + 1)
 
-  (* Prints the hands of the player_hand and the enemy hand. *)
   let print_both_hands (game : t) : unit =
     print_string "Player's hand:";
     List.iter print_card game.player_hand;
     print_string "\nEnemy's hand:";
     List.iter print_card game.player_hand
 
-  (* Returns the hand with n random cards added to the hand. *)
   let rec draw (hand : Card.t list) (n : int) : Card.t list =
     let local_rng = Random.State.make_self_init () in
     if n = 0 then hand
@@ -90,21 +82,15 @@ module Game = struct
       let random_card = Card.get_rand_card local_rng in
       draw (hand @ [ random_card ]) (n - 1)
 
-  (* Returns true if the given card is a valid card to initialize the
-     discard_pile. *)
   let is_valid_first_card (card : Card.t) : bool =
     Card.get_color card <> "Wild"
     && Card.get_number card <> "NaN"
     && Card.get_property_name card = "None"
 
-  (* Keeps drawing a card at random until the card satisfies a given predicate,
-     then returns that card. *)
   let rec draw_valid_card (f : Card.t -> bool) : Card.t =
     let c = draw [] 1 in
     if f (List.hd c) then List.hd c else draw_valid_card f
 
-  (* Initializes game state. Depending on difficulty [d], creates player and
-     enemy hands by drawing 7 cards for each. *)
   let create_hands (d : string) : t =
     let h1 = draw [] 7 in
     let h2 = draw [] 7 in
@@ -115,7 +101,6 @@ module Game = struct
       difficulty = d;
     }
 
-  (* Returns true if a card can legally be played on the discard_pile. *)
   let is_legal_play (card : Card.t) (discard_pile : Card.t) : bool =
     let same_color, same_number, same_property =
       ( Card.get_color card = Card.get_color discard_pile,
@@ -130,8 +115,6 @@ module Game = struct
            be played on each other*)
     | false, false, false -> Card.get_color card = "Wild"
 
-  (* If discard pile card is a card of color Wild, transforms card color to
-     user-described color [new_color] *)
   let transform_pile_wild (game : t) (new_color : string) : t =
     let new_prop = Card.get_property_name game.discard_pile in
     let new_card = Card.make_card new_color "NaN" new_prop in
@@ -142,14 +125,11 @@ module Game = struct
       player_hand = game.player_hand;
     }
 
-  (* Removes [card] from [hand] Returns: [hand] without [card] *)
   let rec remove_card (card : Card.t) = function
     | [] -> []
     | f :: rest when f = card -> rest
     | f :: rest -> f :: remove_card card rest
 
-  (* Applies effect specified in [card.property] to [applier] hand, [affected]
-     hand or both. *)
   let apply_effect (card : Card.t) (applier : Card.t list)
       (affected : Card.t list) =
     match Card.get_property_name card with
@@ -157,11 +137,6 @@ module Game = struct
     | "Draw 2" -> (applier, draw affected 2)
     | _ -> (applier, affected)
 
-  (* Given a LEGAL card to play, the game, and a bool "player" which indicates
-     whether the card is being played by the player [true] or by the opponent
-     [false], this function will play the card onto the discard_pile, and will
-     force any side effects of the card onto the other player, if applicable.
-     Returns a game with the updated hands and discard_piles for the players.*)
   let play_card (card : Card.t) (game : t) (player : bool) : t =
     (* create new game state with: 1. Person playing card loses card [card] 2.
        Set [game.discard_pile] to [card] 3. Apply effect to opposing player
@@ -185,9 +160,6 @@ module Game = struct
       difficulty = game.difficulty;
     }
 
-  (* draws a card to a players hand, takes in a boolean "player" which indicates
-     whether the card is being drawn to the person's hand [true] or by the
-     opponent [false] *)
   let draw_update (game : t) (player : bool) : t =
     match player with
     | true ->
@@ -218,13 +190,10 @@ module Game = struct
               player_hand_num)
     | None -> None
 
-  (* Call AI.enemy_turn until Some playable card is returned. If there are no
-     playable cards in hand, then return None*)
   let enemy_turn (game : t) : Card.t option =
     enemy_turn_helper game.enemy_hand game.difficulty game.discard_pile
       (List.length game.player_hand)
 
-  (*Returns the most prevelant color in hand in string form.*)
   let most_common_color (hand : Card.t list) : string =
     let rec increment_color acc (hand : Card.t list) =
       match hand with
@@ -244,12 +213,7 @@ module Game = struct
     else if acc.(1) >= acc.(2) && acc.(1) >= acc.(3) then "Blue"
     else if acc.(2) >= acc.(3) then "Green"
     else "Yellow"
-  (* let decide_course game = match AI.enemy_turn (game) with | Some enemy_card
-     -> (play_card enemy_card game false) | None -> try_again in game.enemy_hand
-     = enemy_updated_hand; game *)
 
-  (* Checks if either player or opponent meets the win condition: if they have 0
-     cards in their hand *)
   let check_winner (game : t) : bool * int =
     match (List.length game.player_hand, List.length game.enemy_hand) with
     | 0, _ -> (true, 0)

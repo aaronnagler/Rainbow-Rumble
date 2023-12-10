@@ -18,8 +18,6 @@ type numb =
   | Nine
   | NaN
 
-(* tuple (name, description) where name is the name of the property and
-   description details the effect of the property *)
 type prop =
   | Draw2
   | Draw4
@@ -31,45 +29,20 @@ type card = {
 }
 
 module type CardType = sig
-  (* Type representing a card *)
   type t
 
-  (* Returns the color of the card as a string *)
   val get_color : t -> string
-
-  (* Returns the number of the card as a string *)
   val get_number : t -> string
-
-  (* If the card has a property, return card property as a string. Returns
-     "None" if the card has no property *)
   val get_property_name : t -> string
-
-  (* If the card has a property, return card property as a string. Returns
-     "None" if the card has no property *)
   val get_property_description : t -> string
-
-  (* Returns a randomly generated card *)
   val get_rand_card : Random.State.t -> t
-
-  (* Given a string [numb], returns the associated number. *)
   val make_numb : string -> numb
-
-  (* Given a string prop, returns the associated number. *)
+  val make_color : string -> color
   val make_prop : string -> prop option
-
-  (* returns a card with specified color, number, and property *)
   val make_card : string -> string -> string -> t
-
-  (*Returns all number cards given a hand*)
   val filter_number_cards : t list -> t list
-
-  (*Return all cards with special property (excluding wild) given a hand*)
   val filter_special_cards : t list -> t list
-
-  (*Returns all wild cards (that is, cards with a "wild" color) given a hand*)
   val filter_wild_cards : t list -> t list
-
-  (*Returns the most prevalant color in hand.*)
   val most_common_color : t list -> color
 end
 
@@ -116,7 +89,6 @@ module Card : CardType = struct
         | Draw2 -> "Opponent must draw 2 cards from the top of the deck"
         | Draw4 -> "Opponent must draw 4 cards from the top of the deck")
 
-  (* this should maybe be in list and not card *)
   let get_rand_card local_rng_state =
     let color_list = [ Wild; Red; Blue; Green; Yellow ] in
     let numb_list =
@@ -140,17 +112,6 @@ module Card : CardType = struct
               property = None;
             })
 
-  (* Given a string [color], returns the associated color. *)
-  let make_color (color : string) =
-    match String.lowercase_ascii color with
-    | "red" -> Red
-    | "blue" -> Blue
-    | "green" -> Green
-    | "yellow" -> Yellow
-    | "wild" -> Wild
-    | _ -> failwith "Not a valid color"
-
-  (* Given a string [numb], returns the associated number. *)
   let make_numb (numb : string) =
     match String.lowercase_ascii numb with
     | "0" | "zero" -> Zero
@@ -165,6 +126,15 @@ module Card : CardType = struct
     | "9" | "nine" -> Nine
     | "nan" -> NaN
     | _ -> failwith "Not a valid numb"
+
+  let make_color (color : string) =
+    match String.lowercase_ascii color with
+    | "red" -> Red
+    | "blue" -> Blue
+    | "green" -> Green
+    | "yellow" -> Yellow
+    | "wild" -> Wild
+    | _ -> failwith "Not a valid color"
 
   let make_prop (prop : string) =
     match String.lowercase_ascii prop with
