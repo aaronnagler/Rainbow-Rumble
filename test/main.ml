@@ -43,6 +43,9 @@ open Opp
     of others, our manual tests (testing through playing the game) couldn't be
     as comprehensive as our OUnit test cases.
 
+    (Everything in manager.ml was only "tested" by starting the game and playing
+    different routes / taking different actions).
+
     Correctness of the system: Overall, since our program is a game which has
     its main function being creating a good experince for the user, a good
     perspective to analyze wether we acheive correctness in our program is to

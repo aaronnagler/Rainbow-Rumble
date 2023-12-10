@@ -1,7 +1,7 @@
 open Game
 open Cards
 
-(* read-eval-print loop *)
+(** read-eval-print loop *)
 let rec repl (eval : string -> string) : unit =
   print_string "> ";
   let input = read_line () in
@@ -11,18 +11,14 @@ let rec repl (eval : string -> string) : unit =
       input |> eval |> print_endline;
       repl eval
 
-(* let rec blank_space i = print_endline (String.make i '\n'); *)
-
-(* Draws a card to the players hand, returns the updated game, if player is
-   [true] then draws card to players hand, if player is false then draws card to
-   opponent's hand *)
+(** Draws a card to the players hand, returns the updated game, if player is
+    [true] then draws card to players hand, if player is false then draws card
+    to opponent's hand *)
 let draw_card (game : Game.t) (player : bool) =
-  (* print_endline (String.make 40 '\n'); print_endline "Scroll up if you want
-     to see your previous input!"; *)
   print_endline "\n---------------------------------------------------------\n";
   Game.draw_update game player
 
-(* Based on the input, prints the corresponding card. *)
+(** Based on the input, prints the corresponding card. *)
 let rec read_card s (game : Game.t) =
   print_endline (String.make 40 '\n');
   print_endline "Scroll up if you want to see your previous input!";
@@ -31,8 +27,6 @@ let rec read_card s (game : Game.t) =
     let c = List.nth game.player_hand (int_of_string s) in
     print_endline "\n";
     Game.print_long c;
-    (* let s = "\n" ^ "\n" ^ Card.get_property_name c ^ ": " ^
-       Card.get_property_description c ^ "\n" in print_endline s; *)
     game
   with Failure x ->
     print_endline "Discard Pile: \n";
@@ -44,29 +38,9 @@ let rec read_card s (game : Game.t) =
     print_string "> ";
     read_card (read_line ()) game
 
-(* Returns the updated game after the function plays the card corresponding to
-   user input (A-F) if the card is valid, if not, does not play the card, and
-   prints corresponding statement *)
-
-(* let play_card s (game : Game.t) = if Game.is_legal_play (List.nth
-   game.player_hand (int_of_string s)) game.discard_pile then ( print_endline
-   "Card was played successfully!"; let new_game_state = Game.play_card
-   (List.nth game.player_hand (int_of_string s)) game true in if Card.get_color
-   new_game_state.discard_pile = "Wild" then let input = read_line () in
-   Game.transform_pile_wild new_game_state input else new_game_state) else (
-   print_endline "Card could not be played, please try another card or draw a
-   card."; game) *)
-
-(* let x = game in match x with | x -> let new_game_state = Game.play_card
-   (List.nth game.player_hand (int_of_string s)) game true in match
-   Card.get_color new_game_state.discard_pile with | "Wild" -> print_endline
-   "Choose new color for wild card: "; let input = read_line () in
-   transition_before_opp (Game.transform_pile_wild new_game_state input) | _ ->
-   new_game_state) | _ -> *)
-
-(* Performs opponent's turn, checking on wether opp was able to play a card or
-   if they are choosing to draw a card instead. Prints out what the opp did and
-   returns the updated game state *)
+(** Performs opponent's turn, checking on wether opp was able to play a card or
+    if they are choosing to draw a card instead. Prints out what the opp did and
+    returns the updated game state *)
 let opps_turn (game : Game.t) : Game.t =
   match Game.enemy_turn game with
   | Some x -> (
@@ -93,9 +67,9 @@ let opps_turn (game : Game.t) : Game.t =
       print_endline "The opponent chose to draw a card";
       draw_card game false
 
-(* Call this function if the player was successfully able to have a turn, this
-   function outputs the result of their turn, and asks if they are ready for the
-   opponent's turn, and if so, triggers the opponents turn. *)
+(** Call this function if the player was successfully able to have a turn, this
+    function outputs the result of their turn, and asks if they are ready for
+    the opponent's turn, and if so, triggers the opponents turn. *)
 let transition_before_opp (game : Game.t) : Game.t =
   print_endline (String.make 40 '\n');
   print_endline "Scroll up if you want to see your previous input!";
@@ -123,8 +97,9 @@ let transition_before_opp (game : Game.t) : Game.t =
       print_endline "Opponent's turn! \n";
       opps_turn game
 
-(* Same thing as above [play_card], but with pattern matching instead of
-   if-statements ( +2 lines :D )*)
+(** Returns the updated game after the function plays the card corresponding to
+    user input if the card is valid, if not, does not play the card, and prints
+    corresponding statement *)
 let rec play_card s (game : Game.t) =
   print_endline (String.make 40 '\n');
   print_endline "Scroll up if you want to see your previous input!";
@@ -175,8 +150,8 @@ let rec play_card s (game : Game.t) =
     print_string "> ";
     play_card (read_line ()) game
 
-(* Matches user input with a shorter string that will be used to process their
-   request in the process of the game *)
+(** Matches user input with a shorter string that will be used to process their
+    request in the process of the game *)
 let stage_2 x =
   match read_line () with
   | "play card" ->
@@ -199,8 +174,8 @@ let stage_2 x =
         "\n---------------------------------------------------------\n";
       "please enter a valid input"
 
-(* Upon the user's request, performs the given action and returns the updated
-   game *)
+(** Upon the user's request, performs the given action and returns the updated
+    game *)
 let rec game_process z (game : Game.t) =
   (* Check if win condition have been met *)
   print_endline ("THE DIFFICULTY: " ^ game.difficulty);
@@ -257,11 +232,10 @@ let rec game_process z (game : Game.t) =
           print_endline "Please enter a valid input";
           game_process () game)
 
-(* returns the string "I hope you have fun!" *)
+(** Returns the string "I hope you have fun!" *)
 let start_game x = "Good luck and have fun!"
-(* let start_game x = "\n" *)
 
-(* Prints some instructions about starting the game and takes users' input *)
+(** Prints some instructions about starting the game and takes users' input *)
 let stage_1 x =
   print_endline
     "    \n\n\
@@ -332,8 +306,8 @@ let stage_1 x =
         "\n---------------------------------------------------------\n";
       "please enter a valid input"
 
-(* Takes user's input in the starting stage of the game and either begins the
-   game or persists this menu *)
+(** Takes user's input in the starting stage of the game and either begins the
+    game or persists this menu *)
 let rec start_menu z =
   match stage_1 () with
   | "I hope you have fun!" -> "\n"
@@ -342,7 +316,7 @@ let rec start_menu z =
       print_endline x;
       start_menu ()
 
-(* Requests desired difficulty from player *)
+(** Requests desired difficulty from player *)
 let rec set_difficulty () =
   print_endline
     "Select number for game difficulty: \n 0. Easy \n 1. Medium \n 2. Hard";
@@ -362,8 +336,7 @@ let rec set_difficulty () =
       "hard"
   | _ -> set_difficulty ()
 
-(* Upon game completion, givens player option to play again or go to main
-   menu *)
+(** Upon game completion, givens player option to play again or go to main menu *)
 let rec play_again () =
   print_endline "What do you want to do now?";
   print_endline "0. Play again";
@@ -395,9 +368,3 @@ let () =
   print_endline ("\n" ^ start_game ());
   print_endline (game_process () (Game.create_hands diff));
   play_again ()
-
-(* Game.print_player_hand; Game.create_hands; let words = read_line () in
-   print_endline words; Game.print_player_hand Game.create_hands *)
-
-(* let () = for i = 0 to Array.length Sys.argv - 1 do Printf.printf "[%i] %s\n"
-   i Sys.argv.(i) done *)
